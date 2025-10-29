@@ -815,39 +815,56 @@ function showFishWarning(show) {
 
 // After each stroke, check if it's a fish
 async function checkFishAfterStroke() {
-    if (!window.ort) return; // ONNX runtime not loaded
+    if (!window.ort) {
+        console.warn('ONNX Runtime not available, skipping fish detection');
+        return; // ONNX runtime not loaded
+    }
     
     // Wait for model to be loaded if it's not ready yet
     if (!ortSession) {
         try {
+            console.log('Model not loaded yet, attempting to load...');
             await loadFishModel();
         } catch (error) {
             console.error('Model not available for fish checking:', error);
+            // Show a one-time warning to the user
+            if (!window.modelLoadErrorShown) {
+                window.modelLoadErrorShown = true;
+                console.error('AI fish detection is currently unavailable. Your drawing can still be submitted.');
+            }
             return;
         }
     }
     
-    const isFish = await verifyFishDoodle(canvas);
-    lastFishCheck = isFish;
-    showFishWarning(!isFish);
+    try {
+        const isFish = await verifyFishDoodle(canvas);
+        lastFishCheck = isFish;
+        showFishWarning(!isFish);
+    } catch (error) {
+        console.error('Error during fish verification:', error);
+    }
 }
 
-// Load ONNX Runtime Web from CDN if not present
+// Initialize ONNX Runtime and load model when page loads
 (function ensureONNXRuntime() {
-    if (!window.ort) {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js';
-        script.onload = () => { 
-            console.log('ONNX Runtime loaded, starting model load...');
-            loadFishModel().catch(error => {
-                console.error('Failed to load model on startup:', error);
-            });
-        };
-        document.head.appendChild(script);
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeONNX);
     } else {
-        console.log('ONNX Runtime already available, starting model load...');
+        initializeONNX();
+    }
+    
+    function initializeONNX() {
+        if (!window.ort) {
+            console.error('ONNX Runtime not loaded! Please check if the script is included in HTML.');
+            return;
+        }
+        
+        console.log('ONNX Runtime available, starting model load...');
         loadFishModel().catch(error => {
-            console.error('Failed to load model on startup:', error);
+            console.error('Failed to load fish model on startup:', error);
+            console.error('Model path: fish_doodle_classifier.onnx');
+            console.error('Please ensure the model file exists in the project root directory.');
         });
     }
 })();
