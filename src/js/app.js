@@ -1,8 +1,118 @@
 // Drawing logic
 const canvas = document.getElementById('draw-canvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d', { willReadFrequently: true }); // 性能优化：频繁读取画布
 ctx.lineWidth = 6; // Make lines thicker for better visibility
 let drawing = false;
+
+// ===== 背景装饰气泡效果 =====
+function createBackgroundBubbles() {
+    const bubblesContainer = document.getElementById('background-bubbles');
+    if (!bubblesContainer) return;
+    
+    // 创建15个气泡
+    for (let i = 0; i < 15; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        
+        // 随机大小 (20px - 80px)
+        const size = Math.random() * 60 + 20;
+        bubble.style.width = size + 'px';
+        bubble.style.height = size + 'px';
+        
+        // 随机位置
+        bubble.style.left = Math.random() * 100 + '%';
+        
+        // 随机动画持续时间 (6s - 12s)
+        const duration = Math.random() * 6 + 6;
+        bubble.style.animationDuration = duration + 's';
+        
+        // 随机延迟 (0s - 5s)
+        const delay = Math.random() * 5;
+        bubble.style.animationDelay = delay + 's';
+        
+        bubblesContainer.appendChild(bubble);
+    }
+}
+
+// ===== 绘画粒子效果 =====
+let particles = [];
+
+function createDrawingParticle(x, y) {
+    const particlesContainer = document.getElementById('drawing-particles');
+    if (!particlesContainer) return;
+    
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    
+    // 随机颜色（柔和的海洋色系）
+    const colors = ['#4FC3F7', '#FF6B9D', '#A5D6A7', '#FFD54F', '#B39DDB'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    const size = Math.random() * 6 + 3;
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    particle.style.background = color;
+    particle.style.left = x + 'px';
+    particle.style.top = y + 'px';
+    particle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+    particle.style.setProperty('--ty', -(Math.random() * 100 + 50) + 'px');
+    particle.style.animation = 'explode 0.8s ease-out forwards';
+    
+    particlesContainer.appendChild(particle);
+    
+    // 移除粒子
+    setTimeout(() => {
+        if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+        }
+    }, 800);
+}
+
+// ===== 五彩纸屑效果 =====
+function createConfetti(x, y, count = 30) {
+    const particlesContainer = document.getElementById('drawing-particles');
+    if (!particlesContainer) return;
+    
+    for (let i = 0; i < count; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'particle';
+        
+        // 随机颜色
+        const colors = ['#4FC3F7', '#FF6B9D', '#A5D6A7', '#FFD54F', '#B39DDB', '#FFAB91'];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        const size = Math.random() * 8 + 4;
+        confetti.style.width = size + 'px';
+        confetti.style.height = size + 'px';
+        confetti.style.background = color;
+        confetti.style.left = x + 'px';
+        confetti.style.top = y + 'px';
+        
+        // 随机方向
+        const angle = (Math.PI * 2 * i) / count;
+        const velocity = Math.random() * 150 + 100;
+        const tx = Math.cos(angle) * velocity;
+        const ty = Math.sin(angle) * velocity - 100; // 向上偏移
+        
+        confetti.style.setProperty('--tx', tx + 'px');
+        confetti.style.setProperty('--ty', ty + 'px');
+        confetti.style.animation = 'confetti 1.2s ease-out forwards';
+        
+        particlesContainer.appendChild(confetti);
+        
+        // 移除纸屑
+        setTimeout(() => {
+            if (confetti.parentNode) {
+                confetti.parentNode.removeChild(confetti);
+            }
+        }, 1200);
+    }
+}
+
+// 页面加载时创建背景气泡
+document.addEventListener('DOMContentLoaded', () => {
+    createBackgroundBubbles();
+});
 
 // Mouse events
 canvas.addEventListener('mousedown', (e) => {
@@ -14,6 +124,12 @@ canvas.addEventListener('mousemove', (e) => {
     if (drawing) {
         ctx.lineTo(e.offsetX, e.offsetY);
         ctx.stroke();
+        
+        // 添加绘画粒子效果（降低频率以提升性能）
+        if (Math.random() > 0.7) {
+            const rect = canvas.getBoundingClientRect();
+            createDrawingParticle(rect.left + e.offsetX, rect.top + e.offsetY);
+        }
     }
 });
 canvas.addEventListener('mouseup', () => {
@@ -38,8 +154,15 @@ canvas.addEventListener('touchmove', (e) => {
     if (drawing) {
         const rect = canvas.getBoundingClientRect();
         const touch = e.touches[0];
-        ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        ctx.lineTo(x, y);
         ctx.stroke();
+        
+        // 添加绘画粒子效果（降低频率以提升性能）
+        if (Math.random() > 0.7) {
+            createDrawingParticle(touch.clientX, touch.clientY);
+        }
     }
 });
 canvas.addEventListener('touchend', () => {
@@ -86,6 +209,67 @@ function showModal(html, onClose) {
     return { close, modal };
 }
 
+// Enhanced success modal with social sharing
+function showSuccessModal(fishImageUrl, needsModeration) {
+    const config = window.SOCIAL_CONFIG;
+    const overlay = document.createElement('div');
+    overlay.className = 'success-modal-overlay';
+    
+    const modalHTML = `
+        <div class="success-modal-content">
+            <h2>🎉 ${needsModeration ? 'Fish Submitted!' : 'Your Fish is Swimming!'}</h2>
+            
+            <div class="fish-preview">
+                <img src="${fishImageUrl}" alt="Your fish" style="max-width: 200px; border-radius: 10px; border: 3px solid #27ae60;">
+            </div>
+            
+            <p class="cta-text">
+                ${needsModeration 
+                    ? 'Your fish will appear in the tank after review.' 
+                    : 'Love creating with AI? Join our community!'}
+            </p>
+            
+            <div class="social-actions">
+                <a href="${config.twitter.url}" target="_blank" rel="noopener noreferrer" class="btn btn-twitter">
+                    🐦 ${config.twitter.displayText}
+                </a>
+                <a href="${config.discord.inviteUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-discord">
+                    💬 ${config.discord.displayText}
+                </a>
+            </div>
+            
+            <div class="cta-text" style="margin-top: 20px;">
+                <strong>Share your creation:</strong>
+            </div>
+            
+            <div id="share-buttons-container"></div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <button onclick="window.location.href='tank.html'" class="btn btn-secondary" style="padding: 12px 30px;">
+                    View Fish Tank →
+                </button>
+            </div>
+        </div>
+    `;
+    
+    overlay.innerHTML = modalHTML;
+    document.body.appendChild(overlay);
+    
+    // Add share buttons using the social share module
+    const shareContainer = overlay.querySelector('#share-buttons-container');
+    if (shareContainer && window.socialShare) {
+        const shareMenu = window.socialShare.createShareMenu('success-modal-share');
+        shareContainer.appendChild(shareMenu);
+    }
+    
+    // Close modal when clicking outside
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            document.body.removeChild(overlay);
+        }
+    });
+}
+
 // --- Fish submission modal handler ---
 async function submitFish(artist, needsModeration = false) {
     function dataURLtoBlob(dataurl) {
@@ -125,7 +309,7 @@ async function submitFish(artist, needsModeration = false) {
         }
         
         // Await server response
-        const resp = await fetch(`${BACKEND_URL}/uploadfish`, {
+        const resp = await fetch(`${window.BACKEND_URL}/uploadfish`, {
             method: 'POST',
             headers: headers,
             body: formData
@@ -142,17 +326,8 @@ async function submitFish(artist, needsModeration = false) {
             localStorage.setItem('lastFishDate', today);
             localStorage.setItem('userId', result.data.userId);
             
-            // Show success message based on moderation status
-            if (needsModeration) {
-                showModal(`<div style='text-align:center;'>
-                    <h1>Fish Submitted for Review</div>
-                    <div>Your fish has been submitted and will appear in the tank once it passes moderator review.</div>
-                    <button onclick="window.location.href='tank.html'">View Tank</button>
-                </div>`, () => {});
-            } else {
-                // Regular fish - go directly to tank
-                window.location.href = 'tank.html';
-            }
+            // Show enhanced success modal with social sharing
+            showSuccessModal(result.data.Image, needsModeration);
         } else {
             alert('Sorry, there was a problem uploading your fish. Please try again.');
         }
@@ -243,22 +418,25 @@ function createPaintOptions() {
     // Color buttons
     colors.forEach(color => {
         const btn = document.createElement('button');
+        btn.className = 'cute-color-button';
         btn.style.background = color;
-        btn.style.width = '24px';
-        btn.style.height = '24px';
-        btn.style.minWidth = '24px';
-        btn.style.minHeight = '24px';
-        btn.style.border = '1px solid #000';
-        btn.style.cursor = 'pointer';
-        btn.style.borderRadius = '50%';
         btn.title = color;
         btn.onclick = () => {
+            // 移除其他按钮的active类
+            document.querySelectorAll('.cute-color-button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
             ctx.globalCompositeOperation = 'source-over';
             currentColor = color;
             ctx.strokeStyle = color;
         };
         colorContainer.appendChild(btn); 
     });
+    
+    // 默认选中第一个颜色
+    if (colorContainer.firstChild) {
+        colorContainer.firstChild.classList.add('active');
+    }
     paintBar.appendChild(colorContainer);
 
     // Create a controls container for better mobile layout
@@ -642,25 +820,19 @@ async function verifyFishDoodle(canvas) {
     if (!probDiv) {
         probDiv = document.createElement('div');
         probDiv.id = 'fish-probability';
-        probDiv.style.textAlign = 'center';
-        probDiv.style.margin = '10px 0 0 0';
-        probDiv.style.fontWeight = 'bold';
-        probDiv.style.fontSize = '1.1em';
-        probDiv.style.color = isFish ? '#218838' : '#c0392b';
-        const drawCanvas = document.getElementById('draw-canvas');
-        if (drawCanvas && drawCanvas.parentNode) {
-            if (drawCanvas.nextSibling) {
-                drawCanvas.parentNode.insertBefore(probDiv, drawCanvas.nextSibling);
-            } else {
-                drawCanvas.parentNode.appendChild(probDiv);
-            }
+        const canvasContainer = document.querySelector('.cute-canvas-container');
+        if (canvasContainer && canvasContainer.parentNode) {
+            canvasContainer.parentNode.insertBefore(probDiv, canvasContainer.nextSibling);
         } else {
             const drawUI = document.getElementById('draw-ui');
             if (drawUI) drawUI.appendChild(probDiv);
         }
     }
-    probDiv.textContent = `Fish probability: ${(fishProbability * 100).toFixed(1)}%`;
-    probDiv.style.color = isFish ? '#218838' : '#c0392b';
+    
+    // 更新文本和样式类
+    probDiv.textContent = `🐠 Fish probability: ${(fishProbability * 100).toFixed(1)}% ${isFish ? '✨' : '⚠️'}`;
+    probDiv.className = isFish ? 'high-probability' : 'low-probability';
+    
     return isFish;
 }
 

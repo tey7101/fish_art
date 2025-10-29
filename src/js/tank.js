@@ -5,6 +5,41 @@ const swimCanvas = document.getElementById('swim-canvas');
 const swimCtx = swimCanvas.getContext('2d');
 const fishes = [];
 
+// ===== 背景装饰气泡效果 =====
+function createBackgroundBubbles() {
+    const bubblesContainer = document.getElementById('background-bubbles');
+    if (!bubblesContainer) return;
+    
+    // 创建20个气泡（鱼缸页气泡更多）
+    for (let i = 0; i < 20; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        
+        // 随机大小 (15px - 60px)
+        const size = Math.random() * 45 + 15;
+        bubble.style.width = size + 'px';
+        bubble.style.height = size + 'px';
+        
+        // 随机位置
+        bubble.style.left = Math.random() * 100 + '%';
+        
+        // 随机动画持续时间 (5s - 10s)
+        const duration = Math.random() * 5 + 5;
+        bubble.style.animationDuration = duration + 's';
+        
+        // 随机延迟 (0s - 8s)
+        const delay = Math.random() * 8;
+        bubble.style.animationDelay = delay + 's';
+        
+        bubblesContainer.appendChild(bubble);
+    }
+}
+
+// 页面加载时创建背景气泡
+document.addEventListener('DOMContentLoaded', () => {
+    createBackgroundBubbles();
+});
+
 // Food system
 const foodPellets = [];
 const FOOD_SIZE = 8; // Increased size for better visibility
@@ -39,25 +74,29 @@ function dropFoodPellet(x, y) {
 }
 
 function createFeedingEffect(x, y) {
-    // Create a small splash effect when food is dropped
+    // Create a colorful splash effect when food is dropped
     const effect = {
         x: x,
         y: y,
         particles: [],
         createdAt: Date.now(),
-        duration: 300,
+        duration: 500,
         type: 'feeding'
     };
 
-    // Create small splash particles
-    for (let i = 0; i < 8; i++) {
-        const angle = (Math.PI * 2 * i) / 8;
+    // Create colorful splash particles with different colors
+    const colors = ['#4FC3F7', '#FF6B9D', '#A5D6A7', '#FFD54F', '#B39DDB'];
+    for (let i = 0; i < 12; i++) {
+        const angle = (Math.PI * 2 * i) / 12;
+        const velocity = Math.random() * 3 + 2;
         effect.particles.push({
             x: x,
             y: y,
-            vx: Math.cos(angle) * 3,
-            vy: Math.sin(angle) * 3,
-            life: 1
+            vx: Math.cos(angle) * velocity,
+            vy: Math.sin(angle) * velocity,
+            life: 1,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            size: Math.random() * 4 + 2
         });
     }
 
@@ -194,16 +233,17 @@ function renderFeedingEffects() {
 
         swimCtx.save();
         swimCtx.globalAlpha = 1 - progress;
-        swimCtx.fillStyle = '#4CAF50'; // Green color for feeding effect
 
         for (const particle of effect.particles) {
             particle.x += particle.vx;
             particle.y += particle.vy;
-            particle.vx *= 0.95; // Slight drag
-            particle.vy *= 0.95;
+            particle.vx *= 0.96; // Slight drag
+            particle.vy *= 0.96;
 
+            // Use particle's own color
+            swimCtx.fillStyle = particle.color || '#4CAF50';
             swimCtx.beginPath();
-            swimCtx.arc(particle.x, particle.y, 2, 0, Math.PI * 2);
+            swimCtx.arc(particle.x, particle.y, particle.size || 2, 0, Math.PI * 2);
             swimCtx.fill();
         }
 

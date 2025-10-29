@@ -24,16 +24,16 @@ const urlParams = new URLSearchParams(window.location.search);
 const forceLocal = urlParams.get('local') === 'true';
 const forceProd = urlParams.get('prod') === 'true';
 
-let BACKEND_URL;
-if (forceLocal) {
-    BACKEND_URL = 'http://localhost:8080';
-} else if (forceProd) {
-    BACKEND_URL = 'https://fishes-be-571679687712.northamerica-northeast1.run.app';
-} else {
-    BACKEND_URL = isLocalhost
-        ? 'http://localhost:8080'
-        : 'https://fishes-be-571679687712.northamerica-northeast1.run.app';
-}
+// 声明为全局变量，确保所有文件都能访问
+// 临时使用生产环境后端进行测试
+window.BACKEND_URL = forceLocal 
+    ? 'http://localhost:8080'
+    : forceProd 
+    ? 'https://fishes-be-571679687712.northamerica-northeast1.run.app'
+    : 'https://fishes-be-571679687712.northamerica-northeast1.run.app'; // 暂时强制使用生产环境
+
+// 创建一个别名以保持向后兼容
+const BACKEND_URL = window.BACKEND_URL;
 
 // Calculate fish score (upvotes - downvotes)
 function calculateScore(fish) {

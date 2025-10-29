@@ -17,10 +17,12 @@
     <link rel="canonical" href="https://drawafish.com/tank.html">
     
     <link rel="stylesheet" href="src/css/style.css">
+    <link rel="stylesheet" href="src/css/animations.css">
+    <link rel="stylesheet" href="src/css/cute-theme.css">
     <link rel="icon" href="public/favicon.ico">
     
     <style>
-        /* Modal styling - matching rank page design */
+        /* Modal styling - cute theme */
         .modal {
             display: none;
             position: fixed;
@@ -28,17 +30,26 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
             z-index: 1000;
+            animation: fadeIn 0.3s ease;
         }
         
         .modal-content {
             background: white;
             margin: 100px auto;
-            padding: 20px;
-            width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            padding: 25px;
+            width: 420px;
+            max-width: 90%;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(79, 195, 247, 0.3);
+            animation: fadeInScale 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 3px solid transparent;
+            background-image: linear-gradient(white, white),
+                              linear-gradient(135deg, #4FC3F7, #FF6B9D, #A5D6A7);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
         }
         
         /* Special styling for add-to-tank modal */
@@ -50,12 +61,16 @@
         .close {
             float: right;
             cursor: pointer;
-            font-size: 24px;
-            color: #666;
+            font-size: 28px;
+            color: #999;
+            transition: all 0.3s ease;
+            line-height: 1;
+            font-weight: 300;
         }
         
         .close:hover {
-            color: #333;
+            color: #FF6B9D;
+            transform: rotate(90deg) scale(1.1);
         }
         
         /* Fish info modal specific styles */
@@ -86,51 +101,69 @@
         .voting-controls {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
-            margin-top: 15px;
+            margin-top: 20px;
         }
         
         .vote-btn {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
+            padding: 10px 18px;
+            border: 2px solid #E0E0E0;
             background: white;
             cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.2s ease;
-            font-size: 14px;
+            border-radius: 15px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            font-size: 15px;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .vote-btn:hover {
-            background: #f0f0f0;
-            transform: translateY(-1px);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .upvote-btn {
+            color: #A5D6A7;
         }
         
         .upvote-btn:hover {
-            background: #d4edda;
-            border-color: #28a745;
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+            border-color: #81C784;
+            color: #2E7D32;
+        }
+        
+        .downvote-btn {
+            color: #FF6B9D;
         }
         
         .downvote-btn:hover {
-            background: #f8d7da;
-            border-color: #dc3545;
+            background: linear-gradient(135deg, #FFE5EC, #FFCDD2);
+            border-color: #FF6B9D;
+            color: #C62828;
         }
         
         .report-btn {
-            padding: 8px;
-            border: 1px solid #ddd;
+            padding: 10px 14px;
+            border: 2px solid #E0E0E0;
             background: white;
             cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.2s ease;
+            border-radius: 15px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            color: #FFD54F;
+            font-weight: 600;
         }
         
         .report-btn:hover {
-            background: #fff3cd;
-            border-color: #ffc107;
+            background: linear-gradient(135deg, #FFF9E6, #FFE082);
+            border-color: #FFD54F;
+            color: #F57C00;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 213, 79, 0.3);
         }
         
         .vote-count {
@@ -415,46 +448,88 @@
     </script>
 </head>
 <body>
-  <canvas id="swim-canvas" width="800" height="400" style="border:1px solid #888; background:#e0f7fa; display:block; margin: 0 auto 0 auto;"></canvas>
+  <!-- 背景装饰气泡 -->
+  <div class="background-bubbles" id="background-bubbles"></div>
   
-  <div class="controls-container" style="text-align: center; margin-top: 15px; font-size: 12px; color: #666;">
-    View: 
-    <select id="tank-sort" style="font-size: 11px; margin: 0 5px;">
-      <option value="recent">Most Recent</option>
-      <option value="popular">Most Popular</option>
-      <option value="random">Random</option>
-    </select>
-    <button id="refresh-tank" style="font-size: 11px; margin-left: 5px;">refresh</button>
-    | 
-    <label style="font-size: 11px; margin-left: 5px;">
-      <input type="checkbox" id="notifications-toggle" checked style="margin-right: 3px;">
-      notifications
-    </label>
-    | 
-    <a href="rank.html" style="color: #0066cc; text-decoration: underline; font-size: 11px;">rankings</a>
-    | 
-    <a href="profile.html" style="color: #0066cc; text-decoration: underline; font-size: 11px;">profile</a>
-    | 
-    <a href="fishtanks.html" id="my-tanks-link" style="color: #0066cc; text-decoration: underline; font-size: 11px;">my tanks</a>
-    
-    <div style="margin-top: 8px;">
-      <label style="font-size: 11px; color: #666;">
-        Fish count: <span id="fish-count-display" style="font-weight: 500;">50</span>
-        <input type="range" id="fish-count-slider" min="1" max="100" value="50" 
-               style="width: 120px; margin: 0 8px; vertical-align: middle; cursor: pointer;">
-        <span id="current-fish-count" style="font-size: 10px; color: #999;"></span>
-      </label>
+  <!-- 鱼缸容器 -->
+  <div class="tank-wrapper">
+    <!-- 装饰层 -->
+    <div class="tank-decorations">
+      <!-- 水草 -->
+      <div class="seaweed seaweed-left"></div>
+      <div class="seaweed seaweed-right"></div>
+      <!-- 底部沙地 -->
+      <div class="sand-layer"></div>
+      <!-- 装饰物 -->
+      <div class="decoration shell"></div>
+      <div class="decoration starfish"></div>
+      <div class="decoration rock"></div>
     </div>
     
-    <div style="margin-top: 8px; font-size: 11px; color: #666;">
-      <strong>Feed the fish:</strong> 
+    <!-- 鱼缸画布 -->
+    <canvas id="swim-canvas" width="800" height="400"></canvas>
+    
+    <!-- 前景光线效果 -->
+    <div class="light-beams">
+      <div class="light-beam"></div>
+      <div class="light-beam delay-1"></div>
+      <div class="light-beam delay-2"></div>
+    </div>
+  </div>
+  
+  <!-- 控制栏 -->
+  <div class="cute-controls-container">
+    <div class="control-row">
+      <!-- 排序控制 -->
+      <div class="control-group">
+        <span class="control-label">🔍 View:</span>
+        <select id="tank-sort" class="cute-select">
+          <option value="recent">🆕 Most Recent</option>
+          <option value="popular">⭐ Most Popular</option>
+          <option value="random">🎲 Random</option>
+        </select>
+        <button id="refresh-tank" class="cute-button cute-button-primary" style="padding: 8px 16px;">
+          🔄 Refresh
+        </button>
+      </div>
+      
+      <!-- 通知和链接 -->
+      <div class="control-group">
+        <label class="cute-checkbox">
+          <input type="checkbox" id="notifications-toggle" checked>
+          <span class="checkmark"></span>
+          <span>🔔 Notifications</span>
+        </label>
+        
+        <a href="rank.html" class="cute-button cute-button-coral" style="padding: 8px 16px;">⭐ Rankings</a>
+        <a href="profile.html" class="cute-button cute-button-success" style="padding: 8px 16px;">👤 Profile</a>
+        <a href="fishtanks.html" id="my-tanks-link" class="cute-button cute-button-sunshine" style="padding: 8px 16px;">🏆 My Tanks</a>
+      </div>
+    </div>
+    
+    <!-- 鱼数量滑块 -->
+    <div class="control-row">
+      <div class="fish-count-control">
+        <span class="control-label">🐠 Fish count:</span>
+        <span id="fish-count-display" class="cute-badge">50</span>
+        <input type="range" id="fish-count-slider" min="1" max="100" value="50" class="cute-slider">
+        <span id="current-fish-count" class="count-detail"></span>
+      </div>
+    </div>
+    
+    <!-- 喂食提示 -->
+    <div class="feed-hint">
+      <strong>🍔 Feed the fish:</strong> 
       <span class="desktop-only">Hold Shift + Click or Right-click</span>
       <span class="mobile-only">Double-tap or Long-press</span>
       to drop food pellets
     </div>
     
-    <div id="loading-indicator" style="display: none; font-size: 11px; color: #999; margin-top: 5px;">
-      loading...
+    <!-- 加载指示器 -->
+    <div id="loading-indicator" class="cute-loader" style="display: none;">
+      <div class="cute-loader-dot"></div>
+      <div class="cute-loader-dot"></div>
+      <div class="cute-loader-dot"></div>
     </div>
   </div>
   <script src="src/js/footer-utils.js"></script>
