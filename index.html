@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Fish Drawing Tool - Create & Share | Draw a Fish with AI</title>
-    <meta name="description" content="Draw a fish with real-time AI validation and watch it swim! Join our community on Twitter & Discord. Share your creations with friends. Free online AI drawing tool.">
+    <meta name="description" content="Draw a fish with real-time AI validation and watch it swim! Join our community on X & Discord. Share your creations with friends. Free online AI drawing tool.">
     <meta name="keywords" content="AI fish drawing, draw a fish, AI art tool, online drawing, fish tank, creative AI, digital drawing, AI validation, community art, free AI tool">
     <meta name="author" content="AI Fish Drawing Community">
     
@@ -17,13 +17,13 @@
     <meta property="og:site_name" content="AI Fish Drawing">
     <meta property="og:locale" content="en_US">
     
-    <!-- Twitter Card tags -->
+    <!-- X (Twitter) Card tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="AI Fish Drawing - Try It Now!">
     <meta name="twitter:description" content="Draw a fish with AI validation and watch it swim! 🐟 Join our community of creators.">
     <meta name="twitter:image" content="https://drawafish.com/favicon.ico">
-    <meta name="twitter:site" content="@YourTwitterHandle">
-    <meta name="twitter:creator" content="@YourTwitterHandle">
+    <meta name="twitter:site" content="@YourXHandle">
+    <meta name="twitter:creator" content="@YourXHandle">
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://drawafish.com">
@@ -121,7 +121,7 @@
         <span class="btn-text">About</span>
       </a>
       <a href="#" id="twitter-nav-link" class="social-btn twitter-btn" target="_blank" rel="noopener noreferrer">
-        🐦 <span class="btn-text">Twitter</span>
+        ✖️ <span class="btn-text">X</span>
       </a>
       <a href="#" id="discord-nav-link" class="social-btn discord-btn" target="_blank" rel="noopener noreferrer">
         💬 <span class="btn-text">Discord</span>
@@ -157,8 +157,6 @@
         <!-- Fish probability indicator (pre-created to prevent layout shifts) -->
         <div id="fish-probability" class="low-probability" style="opacity: 0;">🐠 Fish probability: 00.0% ⚠️</div>
         
-        <br>
-        
         <!-- 提交按钮 -->
         <div class="submit-button-container">
           <button id="swim-btn" class="cute-button cute-button-primary cute-submit-btn animate-pulse" title="Make your fish swim in the tank">
@@ -167,8 +165,6 @@
             <span class="button-icon">🐟</span>
           </button>
         </div>
-        
-        <br>
         
         <!-- 导航链接 -->
         <nav role="navigation" aria-label="Action buttons" class="nav-links-section">
@@ -181,6 +177,9 @@
           <a href="fishtanks.html" id="my-tanks-link" class="cute-button cute-button-primary" title="Create custom fish tanks">
             <span>🏆</span> My Tanks
           </a>
+          <button id="main-share-btn" class="cute-button cute-button-primary" title="Share this tool">
+            <span>📤</span> Share
+          </button>
         </nav>
       </section>
     </div>
@@ -196,7 +195,7 @@
     </p>
     <div class="social-links">
       <a href="#" id="twitter-footer-link" target="_blank" rel="noopener noreferrer">
-        🐦 Twitter
+        ✖️ X
       </a>
       <a href="#" id="discord-footer-link" target="_blank" rel="noopener noreferrer">
         💬 Discord
@@ -206,9 +205,9 @@
 
   <!-- Mobile Bottom Social Bar -->
   <div class="mobile-social-bar">
-    <button id="mobile-twitter-btn" title="Follow on Twitter">
-      🐦
-      <span>Twitter</span>
+    <button id="mobile-twitter-btn" title="Follow on X">
+      ✖️
+      <span>X</span>
     </button>
     <button id="mobile-discord-btn" title="Join Discord">
       💬
@@ -268,6 +267,12 @@
       const mobileShare = document.getElementById('mobile-share-btn');
       if (mobileShare) {
         mobileShare.onclick = () => window.socialShare.share('native');
+      }
+      
+      // Main share button
+      const mainShare = document.getElementById('main-share-btn');
+      if (mainShare) {
+        mainShare.onclick = () => window.socialShare.share('native');
       }
     })();
   </script>

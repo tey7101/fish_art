@@ -40,7 +40,7 @@ body {
 
 /* 提交按钮容器 */
 .submit-button-container {
-    margin: 20px 0;
+    margin: 15px 0 10px;
     text-align: center;
 }
 
@@ -60,7 +60,7 @@ body {
     gap: 15px;
     justify-content: center;
     flex-wrap: wrap;
-    margin: 20px 0;
+    margin: 10px 0;
 }
 
 /* ===== 鱼缸页样式 ===== */

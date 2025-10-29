@@ -39,14 +39,19 @@ class SocialShare {
   /**
    * Share to X (formerly Twitter)
    */
-  shareToTwitter(customText, customUrl) {
-    const text = customText || this.config.share.messages.twitter;
+  shareToX(customText, customUrl) {
+    const text = customText || this.config.share.messages.x;
     const url = customUrl || this.siteUrl;
     const hashtags = this.config.share.hashtags.join(',');
     
-    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&hashtags=${hashtags}`;
+    const shareUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&hashtags=${hashtags}`;
     
     this.openPopup(shareUrl, 'X Share', 550, 420);
+  }
+  
+  // Legacy method for backward compatibility
+  shareToTwitter(customText, customUrl) {
+    return this.shareToX(customText, customUrl);
   }
 
   /**
@@ -126,8 +131,9 @@ class SocialShare {
 
     // Platform-specific sharing
     switch (platform.toLowerCase()) {
+      case 'x':
       case 'twitter':
-        this.shareToTwitter(customText, customUrl);
+        this.shareToX(customText, customUrl);
         break;
       case 'facebook':
         this.shareToFacebook(customUrl);
@@ -164,7 +170,8 @@ class SocialShare {
    */
   createShareButton(platform, text, className) {
     const icons = {
-      twitter: '✖️', // X (formerly Twitter)
+      x: '✖️',
+      twitter: '✖️', // Legacy support
       facebook: '📘',
       linkedin: '💼',
       reddit: '🔶',
@@ -193,7 +200,7 @@ class SocialShare {
       container.appendChild(this.createShareButton('native', 'Share', 'btn-primary'));
     } else {
       // Desktop: show individual platform buttons
-      container.appendChild(this.createShareButton('twitter', 'X', 'btn-twitter'));
+      container.appendChild(this.createShareButton('x', 'X', 'btn-x'));
       container.appendChild(this.createShareButton('facebook', 'Facebook', 'btn-facebook'));
       container.appendChild(this.createShareButton('linkedin', 'LinkedIn', 'btn-linkedin'));
       container.appendChild(this.createShareButton('reddit', 'Reddit', 'btn-reddit'));

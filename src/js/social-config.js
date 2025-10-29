@@ -10,11 +10,19 @@ const SOCIAL_CONFIG = {
   },
 
   // X (formerly Twitter) configuration
-  twitter: {
+  x: {
     handle: "YourXHandle", // TODO: Replace with your X handle (without @)
     url: "https://x.com/YourXHandle", // TODO: Replace with your X URL
     displayText: "Follow on X",
     followerCount: "10K+" // Optional: Update this manually or remove
+  },
+  
+  // Legacy Twitter reference for compatibility
+  twitter: {
+    handle: "YourXHandle",
+    url: "https://x.com/YourXHandle",
+    displayText: "Follow on X",
+    followerCount: "10K+"
   },
 
   // Discord configuration
@@ -32,7 +40,8 @@ const SOCIAL_CONFIG = {
     
     // Platform-specific share messages
     messages: {
-      twitter: "I just drew a fish with AI and it came to life! 🐟 Try it yourself:", // X (formerly Twitter)
+      x: "I just drew a fish with AI and it came to life! 🐟 Try it yourself:",
+      twitter: "I just drew a fish with AI and it came to life! 🐟 Try it yourself:", // Legacy
       facebook: "Check out this cool AI fish drawing tool I found!",
       linkedin: "Interesting AI project: Draw a fish and watch it swim with real-time AI validation.",
       reddit: "Found this awesome AI fish drawing tool - your fish actually swims!"
