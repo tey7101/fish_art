@@ -17,6 +17,8 @@
     <link rel="canonical" href="https://drawafish.com/rank.html">
     
     <link rel="stylesheet" href="src/css/style.css">
+    <link rel="stylesheet" href="src/css/animations.css">
+    <link rel="stylesheet" href="src/css/cute-theme.css">
     <link rel="icon" href="public/favicon.ico">
     
     <!-- Google tag (gtag.js) -->
@@ -69,6 +71,8 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
         
         .ranking-header {
@@ -77,33 +81,50 @@
         }
         
         .ranking-header h1 {
-            margin: 0;
+            margin: 20px 0 10px;
             font-size: 2.5em;
-            color: #333;
+            color: #0288D1;
+            text-shadow: 2px 2px 4px rgba(79, 195, 247, 0.3);
+            font-weight: 700;
         }
         
         /* Sort controls */
         .sort-controls {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 30px;
             flex-wrap: wrap;
         }
         
+        .sort-btn {
+            padding: 10px 20px;
+            border: 2px solid #E0E0E0;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4FC3F7;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
         
         .sort-btn:hover {
-            background: #f0f0f0;
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(79, 195, 247, 0.3);
+            border-color: #4FC3F7;
+            background: linear-gradient(135deg, #E3F2FD, #B2EBF2);
         }
         
         .sort-btn.active {
-            background: #333;
+            background: linear-gradient(135deg, #4FC3F7, #0288D1);
             color: white;
+            border-color: #4FC3F7;
         }
         
         .sort-btn.active:hover {
-            background: #555;
+            background: linear-gradient(135deg, #0288D1, #01579B);
         }
         
         /* Loading state */
@@ -111,7 +132,20 @@
             text-align: center;
             padding: 40px;
             font-size: 18px;
-            color: #666;
+            color: #4FC3F7;
+            font-weight: 600;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
+            border: 3px solid #B2EBF2;
+            border-top-color: #4FC3F7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
         
         /* Grid layout for fish ranking */
@@ -123,13 +157,21 @@
         }
         
         .fish-card {
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            padding: 15px;
+            border: 2px solid #B2EBF2;
+            border-radius: 20px;
+            padding: 20px;
             text-align: center;
             background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(79, 195, 247, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        .fish-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(79, 195, 247, 0.3);
+            border-color: #4FC3F7;
         }
         
         @media (max-width: 768px) {
@@ -168,7 +210,11 @@
         .fish-score {
             font-size: 16px;
             font-weight: bold;
-            color: #007bff;
+            color: #4FC3F7;
+            padding: 5px 10px;
+            background: linear-gradient(135deg, #E3F2FD, #B2EBF2);
+            border-radius: 10px;
+            display: inline-block;
         }
         
         .voting-controls {
@@ -179,45 +225,63 @@
         }
         
         .vote-btn {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
+            padding: 10px 18px;
+            border: 2px solid #E0E0E0;
             background: white;
             cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.2s ease;
-            font-size: 14px;
+            border-radius: 15px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            font-size: 15px;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .vote-btn:hover {
-            background: #f0f0f0;
-            transform: translateY(-1px);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .upvote-btn {
+            color: #4FC3F7;
         }
         
         .upvote-btn:hover {
-            background: #d4edda;
-            border-color: #28a745;
+            background: linear-gradient(135deg, #E3F2FD, #B2EBF2);
+            border-color: #4FC3F7;
+            color: #0288D1;
+        }
+        
+        .downvote-btn {
+            color: #B0BEC5;
         }
         
         .downvote-btn:hover {
-            background: #f8d7da;
-            border-color: #dc3545;
+            background: linear-gradient(135deg, #F5F5F5, #E0E0E0);
+            border-color: #90A4AE;
+            color: #546E7A;
         }
         
         .report-btn {
-            padding: 8px;
-            border: 1px solid #ddd;
+            padding: 10px 14px;
+            border: 2px solid #E0E0E0;
             background: white;
             cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.2s ease;
+            border-radius: 15px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            color: #CFD8DC;
+            font-weight: 600;
         }
         
         .report-btn:hover {
-            background: #fff3cd;
-            border-color: #ffc107;
+            background: linear-gradient(135deg, #FFF9E6, #FFE082);
+            border-color: #FFD54F;
+            color: #F57C00;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 213, 79, 0.3);
         }
         
         .vote-count {
@@ -228,24 +292,33 @@
         .nav-links {
             text-align: center;
             margin-bottom: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(79, 195, 247, 0.2);
+            border: 2px solid #B2EBF2;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .nav-links a {
-            color: #007bff;
+            color: white;
             text-decoration: none;
-            margin: 0 15px;
             font-size: 14px;
-            font-weight: 500;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: background 0.2s ease;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 15px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: linear-gradient(135deg, #4FC3F7, #0288D1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .nav-links a:hover {
-            background: #e9ecef;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(79, 195, 247, 0.4);
         }
         
         /* Modal styling */
@@ -256,51 +329,88 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
             z-index: 1000;
+            animation: fadeIn 0.3s ease;
         }
         
         .modal-content {
             background: white;
             margin: 100px auto;
-            padding: 20px;
-            width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            padding: 25px;
+            width: 420px;
+            max-width: 90%;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(79, 195, 247, 0.3);
+            animation: fadeInScale 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 3px solid #B2EBF2;
         }
         
         .close {
             float: right;
             cursor: pointer;
-            font-size: 24px;
-            color: #666;
+            font-size: 28px;
+            color: #999;
+            transition: all 0.3s ease;
+            line-height: 1;
+            font-weight: 300;
         }
         
         .close:hover {
-            color: #333;
+            color: #4FC3F7;
+            transform: rotate(90deg) scale(1.1);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .ranking-header h1 {
+                font-size: 2em;
+            }
+            
+            .sort-controls {
+                gap: 8px;
+            }
+            
+            .sort-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .nav-links {
+                padding: 15px;
+            }
+            
+            .nav-links a {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="nav-links">
-        <a href="index.html">draw</a>
-        <a href="tank.html">tank</a>
-        <a href="rank.html">rankings</a>
-        <a href="profile.html">profile</a>
-        <a href="fishtanks.html" id="my-tanks-link">my tanks</a>
-        <a href="login.html" id="auth-link">login</a>
+    <!-- 背景装饰气泡 -->
+    <div class="background-bubbles" id="background-bubbles"></div>
+    
+    <div class="nav-links animate-fadeInUp delay-1">
+        <a href="index.html">🎨 Draw</a>
+        <a href="tank.html">🐠 Tank</a>
+        <a href="rank.html">⭐ Rankings</a>
+        <a href="profile.html">👤 Profile</a>
+        <a href="fishtanks.html" id="my-tanks-link">🏆 My Tanks</a>
+        <a href="login.html" id="auth-link">🔐 Login</a>
     </div>
     
     <div class="ranking-container">
-        <div class="ranking-header">
-            <h1> Fish Ranking </h1>
+        <div class="ranking-header animate-fadeInUp">
+            <h1>🐠 Fish Ranking 🏆</h1>
         </div>
         
         <div class="sort-controls">
-            <button class="sort-btn active" data-sort="hot">Sort by Hot</button>
-            <button class="sort-btn" data-sort="score">Sort by Score</button>
-            <button class="sort-btn" data-sort="date">Sort by Date</button>
-            <button class="sort-btn" data-sort="random">Random Order</button>
+            <button class="sort-btn active" data-sort="hot">🔥 Sort by Hot</button>
+            <button class="sort-btn" data-sort="score">⭐ Sort by Score</button>
+            <button class="sort-btn" data-sort="date">📅 Sort by Date</button>
+            <button class="sort-btn" data-sort="random">🎲 Random Order</button>
         </div>
         
         <div id="loading" class="loading">

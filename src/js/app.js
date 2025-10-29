@@ -44,8 +44,8 @@ function createDrawingParticle(x, y) {
     const particle = document.createElement('div');
     particle.className = 'particle';
     
-    // 随机颜色（柔和的海洋色系）
-    const colors = ['#4FC3F7', '#FF6B9D', '#A5D6A7', '#FFD54F', '#B39DDB'];
+    // 蓝色系粒子
+    const colors = ['#4FC3F7', '#80D8FF', '#B2EBF2'];
     const color = colors[Math.floor(Math.random() * colors.length)];
     
     const size = Math.random() * 6 + 3;
@@ -68,7 +68,7 @@ function createDrawingParticle(x, y) {
     }, 800);
 }
 
-// ===== 五彩纸屑效果 =====
+// ===== 庆祝纸屑效果（蓝色系）=====
 function createConfetti(x, y, count = 30) {
     const particlesContainer = document.getElementById('drawing-particles');
     if (!particlesContainer) return;
@@ -77,8 +77,8 @@ function createConfetti(x, y, count = 30) {
         const confetti = document.createElement('div');
         confetti.className = 'particle';
         
-        // 随机颜色
-        const colors = ['#4FC3F7', '#FF6B9D', '#A5D6A7', '#FFD54F', '#B39DDB', '#FFAB91'];
+        // 蓝色系纸屑
+        const colors = ['#4FC3F7', '#80D8FF', '#B2EBF2', '#E1F5FE'];
         const color = colors[Math.floor(Math.random() * colors.length)];
         
         const size = Math.random() * 8 + 4;
@@ -381,8 +381,8 @@ swimBtn.addEventListener('click', async () => {
     };
 });
 
-// Paint options UI
-const colors = ['#000000', '#ff0000', '#00cc00', '#0000ff', '#ffff00', '#ff8800', '#ffffff'];
+// Paint options UI - 简化配色方案
+const colors = ['#000000', '#4FC3F7', '#FF6B9D', '#A5D6A7', '#FFD54F'];
 let currentColor = colors[0];
 let currentLineWidth = 6;
 let undoStack = [];
