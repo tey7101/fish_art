@@ -98,7 +98,7 @@ canvas.addEventListener('mousemove', (e) => {
         ctx.stroke();
         
         // 添加绘画粒子效果（降低频率以提升性能）
-        // 粒子位置相对于canvas（粒子容器现在是绝对定位在容器内）
+        // offsetX/Y 已经是相对于canvas元素的坐标，可以直接用于粒子
         if (Math.random() > 0.7) {
             createDrawingParticle(e.offsetX, e.offsetY);
         }
@@ -120,22 +120,42 @@ canvas.addEventListener('touchstart', (e) => {
     drawing = true;
     canvasRect = canvas.getBoundingClientRect(); // Cache rect once at start
     const touch = e.touches[0];
+    
+    // 计算缩放比例（Canvas内部尺寸 vs 显示尺寸）
+    const scaleX = canvas.width / canvasRect.width;
+    const scaleY = canvas.height / canvasRect.height;
+    
+    // 转换触摸坐标到Canvas坐标系
+    const canvasX = (touch.clientX - canvasRect.left) * scaleX;
+    const canvasY = (touch.clientY - canvasRect.top) * scaleY;
+    
     ctx.beginPath();
-    ctx.moveTo(touch.clientX - canvasRect.left, touch.clientY - canvasRect.top);
+    ctx.moveTo(canvasX, canvasY);
 });
 canvas.addEventListener('touchmove', (e) => {
     e.preventDefault();
     if (drawing && canvasRect) {
         const touch = e.touches[0];
-        const x = touch.clientX - canvasRect.left;
-        const y = touch.clientY - canvasRect.top;
-        ctx.lineTo(x, y);
+        
+        // 计算触摸点相对于Canvas元素的位置（显示坐标）
+        const displayX = touch.clientX - canvasRect.left;
+        const displayY = touch.clientY - canvasRect.top;
+        
+        // 计算缩放比例
+        const scaleX = canvas.width / canvasRect.width;
+        const scaleY = canvas.height / canvasRect.height;
+        
+        // 转换到Canvas内部坐标系用于绘图
+        const canvasX = displayX * scaleX;
+        const canvasY = displayY * scaleY;
+        
+        ctx.lineTo(canvasX, canvasY);
         ctx.stroke();
         
         // 添加绘画粒子效果（降低频率以提升性能）
-        // 粒子位置相对于canvas
+        // 粒子使用显示坐标（相对于canvas元素）
         if (Math.random() > 0.7) {
-            createDrawingParticle(x, y);
+            createDrawingParticle(displayX, displayY);
         }
     }
 });
