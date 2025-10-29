@@ -37,7 +37,7 @@ class SocialShare {
   }
 
   /**
-   * Share to Twitter
+   * Share to X (formerly Twitter)
    */
   shareToTwitter(customText, customUrl) {
     const text = customText || this.config.share.messages.twitter;
@@ -46,7 +46,7 @@ class SocialShare {
     
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&hashtags=${hashtags}`;
     
-    this.openPopup(shareUrl, 'Twitter Share', 550, 420);
+    this.openPopup(shareUrl, 'X Share', 550, 420);
   }
 
   /**
@@ -164,10 +164,11 @@ class SocialShare {
    */
   createShareButton(platform, text, className) {
     const icons = {
-      twitter: '🐦',
+      twitter: '✖️', // X (formerly Twitter)
       facebook: '📘',
       linkedin: '💼',
       reddit: '🔶',
+      discord: '💬',
       copy: '📋',
       native: '📤'
     };
@@ -192,7 +193,7 @@ class SocialShare {
       container.appendChild(this.createShareButton('native', 'Share', 'btn-primary'));
     } else {
       // Desktop: show individual platform buttons
-      container.appendChild(this.createShareButton('twitter', 'Twitter', 'btn-twitter'));
+      container.appendChild(this.createShareButton('twitter', 'X', 'btn-twitter'));
       container.appendChild(this.createShareButton('facebook', 'Facebook', 'btn-facebook'));
       container.appendChild(this.createShareButton('linkedin', 'LinkedIn', 'btn-linkedin'));
       container.appendChild(this.createShareButton('reddit', 'Reddit', 'btn-reddit'));

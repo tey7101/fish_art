@@ -3,36 +3,7 @@ const canvas = document.getElementById('draw-canvas');
 const ctx = canvas.getContext('2d', { willReadFrequently: true }); // 性能优化：频繁读取画布
 ctx.lineWidth = 6; // Make lines thicker for better visibility
 let drawing = false;
-
-// ===== 背景装饰气泡效果 =====
-function createBackgroundBubbles() {
-    const bubblesContainer = document.getElementById('background-bubbles');
-    if (!bubblesContainer) return;
-    
-    // 创建15个气泡
-    for (let i = 0; i < 15; i++) {
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-        
-        // 随机大小 (20px - 80px)
-        const size = Math.random() * 60 + 20;
-        bubble.style.width = size + 'px';
-        bubble.style.height = size + 'px';
-        
-        // 随机位置
-        bubble.style.left = Math.random() * 100 + '%';
-        
-        // 随机动画持续时间 (6s - 12s)
-        const duration = Math.random() * 6 + 6;
-        bubble.style.animationDuration = duration + 's';
-        
-        // 随机延迟 (0s - 5s)
-        const delay = Math.random() * 5;
-        bubble.style.animationDelay = delay + 's';
-        
-        bubblesContainer.appendChild(bubble);
-    }
-}
+let canvasRect = null; // Cache canvas rect to prevent layout thrashing
 
 // ===== 绘画粒子效果 =====
 let particles = [];
@@ -43,15 +14,17 @@ function createDrawingParticle(x, y) {
     
     const particle = document.createElement('div');
     particle.className = 'particle';
+    particle.style.position = 'absolute';
     
-    // 蓝色系粒子
-    const colors = ['#4FC3F7', '#80D8FF', '#B2EBF2'];
+    // 紫色系粒子
+    const colors = ['#6366F1', '#A5B4FC', '#C7D2FE'];
     const color = colors[Math.floor(Math.random() * colors.length)];
     
     const size = Math.random() * 6 + 3;
     particle.style.width = size + 'px';
     particle.style.height = size + 'px';
     particle.style.background = color;
+    particle.style.borderRadius = '50%';
     particle.style.left = x + 'px';
     particle.style.top = y + 'px';
     particle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
@@ -68,7 +41,7 @@ function createDrawingParticle(x, y) {
     }, 800);
 }
 
-// ===== 庆祝纸屑效果（蓝色系）=====
+// ===== 庆祝纸屑效果（紫色系）=====
 function createConfetti(x, y, count = 30) {
     const particlesContainer = document.getElementById('drawing-particles');
     if (!particlesContainer) return;
@@ -76,15 +49,17 @@ function createConfetti(x, y, count = 30) {
     for (let i = 0; i < count; i++) {
         const confetti = document.createElement('div');
         confetti.className = 'particle';
+        confetti.style.position = 'absolute';
         
-        // 蓝色系纸屑
-        const colors = ['#4FC3F7', '#80D8FF', '#B2EBF2', '#E1F5FE'];
+        // 紫色系纸屑
+        const colors = ['#6366F1', '#A5B4FC', '#C7D2FE', '#EEF2FF'];
         const color = colors[Math.floor(Math.random() * colors.length)];
         
         const size = Math.random() * 8 + 4;
         confetti.style.width = size + 'px';
         confetti.style.height = size + 'px';
         confetti.style.background = color;
+        confetti.style.borderRadius = '50%';
         confetti.style.left = x + 'px';
         confetti.style.top = y + 'px';
         
@@ -109,14 +84,11 @@ function createConfetti(x, y, count = 30) {
     }
 }
 
-// 页面加载时创建背景气泡
-document.addEventListener('DOMContentLoaded', () => {
-    createBackgroundBubbles();
-});
 
 // Mouse events
 canvas.addEventListener('mousedown', (e) => {
     drawing = true;
+    canvasRect = canvas.getBoundingClientRect(); // Cache rect once at start
     ctx.beginPath();
     ctx.moveTo(e.offsetX, e.offsetY);
 });
@@ -126,51 +98,55 @@ canvas.addEventListener('mousemove', (e) => {
         ctx.stroke();
         
         // 添加绘画粒子效果（降低频率以提升性能）
+        // 粒子位置相对于canvas（粒子容器现在是绝对定位在容器内）
         if (Math.random() > 0.7) {
-            const rect = canvas.getBoundingClientRect();
-            createDrawingParticle(rect.left + e.offsetX, rect.top + e.offsetY);
+            createDrawingParticle(e.offsetX, e.offsetY);
         }
     }
 });
 canvas.addEventListener('mouseup', () => {
     drawing = false;
+    canvasRect = null; // Clear cache
     checkFishAfterStroke();
 });
 canvas.addEventListener('mouseleave', () => {
     drawing = false;
+    canvasRect = null; // Clear cache
 });
 
 // Touch events for mobile
 canvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
     drawing = true;
-    const rect = canvas.getBoundingClientRect();
+    canvasRect = canvas.getBoundingClientRect(); // Cache rect once at start
     const touch = e.touches[0];
     ctx.beginPath();
-    ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    ctx.moveTo(touch.clientX - canvasRect.left, touch.clientY - canvasRect.top);
 });
 canvas.addEventListener('touchmove', (e) => {
     e.preventDefault();
-    if (drawing) {
-        const rect = canvas.getBoundingClientRect();
+    if (drawing && canvasRect) {
         const touch = e.touches[0];
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
+        const x = touch.clientX - canvasRect.left;
+        const y = touch.clientY - canvasRect.top;
         ctx.lineTo(x, y);
         ctx.stroke();
         
         // 添加绘画粒子效果（降低频率以提升性能）
+        // 粒子位置相对于canvas
         if (Math.random() > 0.7) {
-            createDrawingParticle(touch.clientX, touch.clientY);
+            createDrawingParticle(x, y);
         }
     }
 });
 canvas.addEventListener('touchend', () => {
     drawing = false;
+    canvasRect = null; // Clear cache
     checkFishAfterStroke();
 });
 canvas.addEventListener('touchcancel', () => {
     drawing = false;
+    canvasRect = null; // Clear cache
 });
 
 // Ctrl + Z to undo
@@ -816,22 +792,14 @@ async function verifyFishDoodle(canvas) {
     const isFish = fishProbability >= 0.60;  // Threshold for fish classification
         
     // Update UI with fish probability
-    let probDiv = document.getElementById('fish-probability');
-    if (!probDiv) {
-        probDiv = document.createElement('div');
-        probDiv.id = 'fish-probability';
-        const canvasContainer = document.querySelector('.cute-canvas-container');
-        if (canvasContainer && canvasContainer.parentNode) {
-            canvasContainer.parentNode.insertBefore(probDiv, canvasContainer.nextSibling);
-        } else {
-            const drawUI = document.getElementById('draw-ui');
-            if (drawUI) drawUI.appendChild(probDiv);
-        }
+    // Display the probability (element is pre-created in HTML to prevent layout shifts)
+    const probDiv = document.getElementById('fish-probability');
+    if (probDiv) {
+        // 更新文本和样式类
+        probDiv.textContent = `🐠 Fish probability: ${(fishProbability * 100).toFixed(1)}% ${isFish ? '✨' : '⚠️'}`;
+        probDiv.className = isFish ? 'high-probability' : 'low-probability';
+        probDiv.style.opacity = '1';
     }
-    
-    // 更新文本和样式类
-    probDiv.textContent = `🐠 Fish probability: ${(fishProbability * 100).toFixed(1)}% ${isFish ? '✨' : '⚠️'}`;
-    probDiv.className = isFish ? 'high-probability' : 'low-probability';
     
     return isFish;
 }

@@ -9,17 +9,17 @@ const SOCIAL_CONFIG = {
     description: "Draw a fish with AI validation and watch it swim!"
   },
 
-  // Twitter configuration
+  // X (formerly Twitter) configuration
   twitter: {
-    handle: "YourTwitterHandle", // TODO: Replace with your Twitter handle (without @)
-    url: "https://twitter.com/YourTwitterHandle", // TODO: Replace with your Twitter URL
-    displayText: "Follow on Twitter",
+    handle: "YourXHandle", // TODO: Replace with your X handle (without @)
+    url: "https://x.com/YourXHandle", // TODO: Replace with your X URL
+    displayText: "Follow on X",
     followerCount: "10K+" // Optional: Update this manually or remove
   },
 
   // Discord configuration
   discord: {
-    inviteUrl: "https://discord.gg/placeholder", // TODO: Replace with your Discord invite link
+    inviteUrl: "https://discord.gg/4VJA3Xw2",
     displayText: "Join Discord Community",
     memberCount: "2K+" // Optional: Update this manually or remove
   },
@@ -32,7 +32,7 @@ const SOCIAL_CONFIG = {
     
     // Platform-specific share messages
     messages: {
-      twitter: "I just drew a fish with AI and it came to life! 🐟 Try it yourself:",
+      twitter: "I just drew a fish with AI and it came to life! 🐟 Try it yourself:", // X (formerly Twitter)
       facebook: "Check out this cool AI fish drawing tool I found!",
       linkedin: "Interesting AI project: Draw a fish and watch it swim with real-time AI validation.",
       reddit: "Found this awesome AI fish drawing tool - your fish actually swims!"
@@ -41,7 +41,7 @@ const SOCIAL_CONFIG = {
 
   // Call-to-action texts
   cta: {
-    followTwitter: "Follow for more AI tools",
+    followX: "Follow for more AI tools", // X (formerly Twitter)
     joinDiscord: "Join our community",
     shareYourFish: "Share your fish",
     viewMyProjects: "View my other projects"

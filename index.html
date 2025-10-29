@@ -28,10 +28,10 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://drawafish.com">
     
-    <link rel="stylesheet" href="src/css/style.css">
-    <link rel="stylesheet" href="src/css/traffic.css">
-    <link rel="stylesheet" href="src/css/animations.css">
-    <link rel="stylesheet" href="src/css/cute-theme.css">
+    <link rel="stylesheet" href="src/css/style.css?v=2.0">
+    <link rel="stylesheet" href="src/css/traffic.css?v=2.0">
+    <link rel="stylesheet" href="src/css/animations.css?v=2.0">
+    <link rel="stylesheet" href="src/css/cute-theme.css?v=2.0">
     <link rel="icon" href="public/favicon.ico">
     
     <!-- Google tag (gtag.js) -->
@@ -111,9 +111,6 @@
     </script>
 </head>
 <body>
-  <!-- 背景装饰气泡 -->
-  <div class="background-bubbles" id="background-bubbles"></div>
-  
   <!-- Top Navigation Bar -->
   <nav class="top-nav">
     <div class="logo">
@@ -156,6 +153,9 @@
           <!-- 绘画粒子容器 -->
           <div class="particles-container" id="drawing-particles"></div>
         </div>
+        
+        <!-- Fish probability indicator (pre-created to prevent layout shifts) -->
+        <div id="fish-probability" class="low-probability" style="opacity: 0;">🐠 Fish probability: 00.0% ⚠️</div>
         
         <br>
         

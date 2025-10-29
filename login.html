@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fish Login</title>
-    <link rel="stylesheet" href="src/css/style.css">
+    <link rel="stylesheet" href="src/css/style.css?v=2.0">
+    <link rel="stylesheet" href="src/css/animations.css?v=2.0">
+    <link rel="stylesheet" href="src/css/cute-theme.css?v=2.0">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GS1GYSFBPX"></script>
@@ -18,78 +20,130 @@
     </script>
 
     <style>
+        body {
+            background: linear-gradient(135deg, #F5F5F5 0%, #E8EAF6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
         .login-container {
-            max-width: 350px;
+            max-width: 420px;
             margin: 50px auto;
-            border: 1px solid #000;
-            padding: 15px;
+            border: 3px solid #C7D2FE;
+            border-radius: 20px;
+            padding: 30px;
+            background: white;
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.25);
+            animation: fadeInScale 0.5s ease;
         }
 
         .login-header {
-            padding: 4px 8px;
-            margin: -15px -15px 15px -15px;
+            padding: 10px 15px;
+            margin: -30px -30px 20px -30px;
             font-weight: bold;
+            background: linear-gradient(135deg, #6366F1, #4F46E5);
+            color: white;
+            border-radius: 17px 17px 0 0;
+            font-size: 1.3em;
+            text-align: center;
         }
 
         .auth-tabs {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
         }
 
         .auth-tab-btn {
-            margin-right: 5px;
+            flex: 1;
+            padding: 10px 20px;
+            border: 2px solid #E0E0E0;
+            background: white;
+            cursor: pointer;
+            border-radius: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .auth-tab-btn:hover {
+            border-color: #6366F1;
+            transform: translateY(-2px);
         }
 
         .auth-tab-btn.active {
-            background: #000;
+            background: linear-gradient(135deg, #6366F1, #4F46E5);
             color: white;
+            border-color: #6366F1;
         }
 
         .auth-form {
-            border: 1px solid #000;
-            padding: 10px;
-            margin-bottom: 15px;
+            border: 2px solid #C7D2FE;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #FAFAFA, #F5F7FA);
             display: block;
         }
 
         .auth-form input {
             width: 100%;
-            padding: 2px;
-            border: 1px solid #000;
-            margin-bottom: 8px;
+            padding: 10px 15px;
+            border: 2px solid #C7D2FE;
+            border-radius: 10px;
+            margin-bottom: 15px;
             display: block;
             box-sizing: border-box;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .auth-form input:focus {
+            border-color: #6366F1;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .loading {
             display: none;
+            text-align: center;
+            color: #6366F1;
+            font-weight: 600;
+            padding: 10px;
         }
 
         .error {
             display: none;
-            color: #800000;
-            background: #ffcccc;
-            border: 1px solid #800000;
-            padding: 5px;
+            color: #DC2626;
+            background: #FEE2E2;
+            border: 2px solid #FCA5A5;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
         }
 
         .success {
             display: none;
-            color: #008000;
-            background: #ccffcc;
-            border: 1px solid #008000;
-            padding: 5px;
+            color: #059669;
+            background: #D1FAE5;
+            border: 2px solid #6EE7B7;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
         }
 
         .divider {
             text-align: center;
-            margin: 15px 0;
-            border-bottom: 1px solid #000;
-            height: 10px;
+            margin: 20px 0;
+            border-bottom: 2px solid #E0E0E0;
+            height: 12px;
         }
 
         .divider span {
             background: white;
-            padding: 0 10px;
+            padding: 0 15px;
+            color: #666;
+            font-weight: 600;
         }
 
         #already-logged-in h3 {
@@ -103,19 +157,27 @@
         }
 
         .btn {
-            padding: 10px 20px;
-            border: 2px solid #007bff;
-            background: #007bff;
+            padding: 12px 25px;
+            border: none;
+            background: linear-gradient(135deg, #6366F1, #4F46E5);
             color: white;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 15px;
             font-size: 14px;
+            font-weight: 600;
             margin: 5px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
         .btn:hover {
-            background: #0056b3;
-            border-color: #0056b3;
+            background: linear-gradient(135deg, #4F46E5, #4338CA);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .home-btn-container {
@@ -125,19 +187,23 @@
 
         .home-btn {
             display: inline-block;
-            padding: 8px 16px;
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            color: #333;
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #C7D2FE;
+            color: #6366F1;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 15px;
             font-size: 14px;
-            transition: all 0.2s;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .home-btn:hover {
-            background: #e9ecef;
-            border-color: #adb5bd;
+            background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+            border-color: #6366F1;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
         }
     </style>
 </head>

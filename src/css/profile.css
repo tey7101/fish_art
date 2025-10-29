@@ -3,6 +3,8 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 .profile-header {
@@ -11,18 +13,21 @@
 }
 
 .profile-header h1 {
-    margin: 0;
+    margin: 20px 0 10px;
     font-size: 2.5em;
-    color: #333;
+    color: #4F46E5;
+    text-shadow: 2px 2px 4px rgba(99, 102, 241, 0.3);
+    font-weight: 700;
 }
 
 .profile-card {
     background: white;
-    border: 2px solid #ddd;
-    border-radius: 10px;
+    border: 2px solid #C7D2FE;
+    border-radius: 20px;
     padding: 30px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
     margin-bottom: 30px;
+    animation: fadeInUp 0.5s ease;
 }
 
 .profile-info {
@@ -46,7 +51,7 @@
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: #007bff;
+    background: linear-gradient(135deg, #6366F1, #4F46E5);
     color: white;
     display: flex;
     align-items: center;
@@ -54,6 +59,7 @@
     font-size: 36px;
     font-weight: bold;
     margin: 0 auto 20px;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .profile-name {
@@ -83,15 +89,21 @@
 .stat-item {
     text-align: center;
     padding: 15px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
+    background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+    border-radius: 15px;
+    border: 2px solid #C7D2FE;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
 }
 
 .stat-value {
     font-size: 24px;
     font-weight: bold;
-    color: #007bff;
+    color: #6366F1;
     margin-bottom: 5px;
 }
 
@@ -108,37 +120,54 @@
 }
 
 .action-btn {
-    padding: 10px 20px;
-    border: 1px solid #ddd;
+    padding: 12px 25px;
+    border: 2px solid #E0E0E0;
     background: white;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 15px;
     text-decoration: none;
     color: #333;
     font-size: 14px;
-    transition: all 0.2s ease;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: inline-block;
 }
 
 .action-btn:hover {
-    background: #f0f0f0;
-    transform: translateY(-1px);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .action-btn.primary {
-    background: #007bff;
+    background: linear-gradient(135deg, #6366F1, #4F46E5);
     color: white;
-    border-color: #007bff;
+    border-color: #6366F1;
 }
 
 .action-btn.primary:hover {
-    background: #0056b3;
+    background: linear-gradient(135deg, #4F46E5, #4338CA);
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
 }
 
 .loading {
     text-align: center;
     padding: 40px;
     font-size: 18px;
-    color: #666;
+    color: #6366F1;
+    font-weight: 600;
+}
+
+.loading::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    border: 3px solid #C7D2FE;
+    border-top-color: #6366F1;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
 .error {
@@ -151,24 +180,33 @@
 .nav-links {
     text-align: center;
     margin-bottom: 20px;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 10px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+    border: 2px solid #C7D2FE;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .nav-links a {
-    color: #007bff;
+    color: white;
     text-decoration: none;
-    margin: 0 15px;
     font-size: 14px;
-    font-weight: 500;
-    padding: 5px 10px;
-    border-radius: 5px;
-    transition: background 0.2s ease;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 15px;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    background: linear-gradient(135deg, #6366F1, #4F46E5);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .nav-links a:hover {
-    background: #e9ecef;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
 }
 
 .profile-empty {
@@ -184,21 +222,23 @@
 
 /* Edit profile styles */
 .edit-name-input {
-    padding: 5px 10px;
-    border: 2px solid #007bff;
-    border-radius: 5px;
+    padding: 8px 15px;
+    border: 2px solid #6366F1;
+    border-radius: 15px;
     font-size: 20px;
     font-weight: bold;
     text-align: center;
     width: 100%;
     max-width: 300px;
     outline: none;
-    transition: border-color 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
 }
 
 .edit-name-input:focus {
-    border-color: #0056b3;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    border-color: #4F46E5;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    transform: scale(1.02);
 }
 
 .edit-buttons {
@@ -209,36 +249,40 @@
 }
 
 .save-btn, .cancel-btn {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
     font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s ease;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .save-btn {
-    background: #28a745;
+    background: linear-gradient(135deg, #6366F1, #4F46E5);
     color: white;
 }
 
 .save-btn:hover {
-    background: #218838;
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #4F46E5, #4338CA);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
 }
 
 .cancel-btn {
-    background: #dc3545;
-    color: white;
+    background: linear-gradient(135deg, #F5F5F5, #E0E0E0);
+    color: #666;
 }
 
 .cancel-btn:hover {
-    background: #c82333;
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #E0E0E0, #BDBDBD);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .saving {
-    background: #6c757d !important;
+    background: #9E9E9E !important;
     cursor: not-allowed !important;
+    opacity: 0.6;
 }

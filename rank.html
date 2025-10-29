@@ -16,9 +16,9 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://drawafish.com/rank.html">
     
-    <link rel="stylesheet" href="src/css/style.css">
-    <link rel="stylesheet" href="src/css/animations.css">
-    <link rel="stylesheet" href="src/css/cute-theme.css">
+    <link rel="stylesheet" href="src/css/style.css?v=2.0">
+    <link rel="stylesheet" href="src/css/animations.css?v=2.0">
+    <link rel="stylesheet" href="src/css/cute-theme.css?v=2.0">
     <link rel="icon" href="public/favicon.ico">
     
     <!-- Google tag (gtag.js) -->
@@ -83,8 +83,8 @@
         .ranking-header h1 {
             margin: 20px 0 10px;
             font-size: 2.5em;
-            color: #0288D1;
-            text-shadow: 2px 2px 4px rgba(79, 195, 247, 0.3);
+            color: #4F46E5;
+            text-shadow: 2px 2px 4px rgba(99, 102, 241, 0.3);
             font-weight: 700;
         }
         
@@ -105,26 +105,26 @@
             cursor: pointer;
             font-size: 14px;
             font-weight: 600;
-            color: #4FC3F7;
+            color: #6366F1;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .sort-btn:hover {
             transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 5px 15px rgba(79, 195, 247, 0.3);
-            border-color: #4FC3F7;
-            background: linear-gradient(135deg, #E3F2FD, #B2EBF2);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+            border-color: #6366F1;
+            background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
         }
         
         .sort-btn.active {
-            background: linear-gradient(135deg, #4FC3F7, #0288D1);
+            background: linear-gradient(135deg, #6366F1, #4F46E5);
             color: white;
-            border-color: #4FC3F7;
+            border-color: #6366F1;
         }
         
         .sort-btn.active:hover {
-            background: linear-gradient(135deg, #0288D1, #01579B);
+            background: linear-gradient(135deg, #4F46E5, #4338CA);
         }
         
         /* Loading state */
@@ -132,7 +132,7 @@
             text-align: center;
             padding: 40px;
             font-size: 18px;
-            color: #4FC3F7;
+            color: #6366F1;
             font-weight: 600;
         }
         
@@ -142,8 +142,8 @@
             width: 20px;
             height: 20px;
             margin-left: 10px;
-            border: 3px solid #B2EBF2;
-            border-top-color: #4FC3F7;
+            border: 3px solid #C7D2FE;
+            border-top-color: #6366F1;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -157,12 +157,12 @@
         }
         
         .fish-card {
-            border: 2px solid #B2EBF2;
+            border: 2px solid #C7D2FE;
             border-radius: 20px;
             padding: 20px;
             text-align: center;
             background: white;
-            box-shadow: 0 4px 15px rgba(79, 195, 247, 0.2);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
             transition: all 0.3s ease;
             cursor: pointer;
             animation: fadeInUp 0.5s ease;
@@ -170,8 +170,8 @@
         
         .fish-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 8px 25px rgba(79, 195, 247, 0.3);
-            border-color: #4FC3F7;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+            border-color: #6366F1;
         }
         
         @media (max-width: 768px) {
@@ -210,9 +210,9 @@
         .fish-score {
             font-size: 16px;
             font-weight: bold;
-            color: #4FC3F7;
+            color: #6366F1;
             padding: 5px 10px;
-            background: linear-gradient(135deg, #E3F2FD, #B2EBF2);
+            background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
             border-radius: 10px;
             display: inline-block;
         }
@@ -245,13 +245,13 @@
         }
         
         .upvote-btn {
-            color: #4FC3F7;
+            color: #6366F1;
         }
         
         .upvote-btn:hover {
-            background: linear-gradient(135deg, #E3F2FD, #B2EBF2);
-            border-color: #4FC3F7;
-            color: #0288D1;
+            background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+            border-color: #6366F1;
+            color: #4F46E5;
         }
         
         .downvote-btn {
@@ -296,8 +296,8 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(79, 195, 247, 0.2);
-            border: 2px solid #B2EBF2;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+            border: 2px solid #C7D2FE;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
@@ -312,13 +312,13 @@
             padding: 10px 20px;
             border-radius: 15px;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            background: linear-gradient(135deg, #4FC3F7, #0288D1);
+            background: linear-gradient(135deg, #6366F1, #4F46E5);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .nav-links a:hover {
             transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 5px 15px rgba(79, 195, 247, 0.4);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
         }
         
         /* Modal styling */
@@ -342,9 +342,9 @@
             width: 420px;
             max-width: 90%;
             border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(79, 195, 247, 0.3);
+            box-shadow: 0 15px 50px rgba(99, 102, 241, 0.3);
             animation: fadeInScale 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            border: 3px solid #B2EBF2;
+            border: 3px solid #C7D2FE;
         }
         
         .close {
@@ -358,7 +358,7 @@
         }
         
         .close:hover {
-            color: #4FC3F7;
+            color: #6366F1;
             transform: rotate(90deg) scale(1.1);
         }
         
@@ -389,10 +389,7 @@
     </style>
 </head>
 <body>
-    <!-- 背景装饰气泡 -->
-    <div class="background-bubbles" id="background-bubbles"></div>
-    
-    <div class="nav-links animate-fadeInUp delay-1">
+  <div class="nav-links animate-fadeInUp delay-1">
         <a href="index.html">🎨 Draw</a>
         <a href="tank.html">🐠 Tank</a>
         <a href="rank.html">⭐ Rankings</a>

@@ -5,41 +5,6 @@ const swimCanvas = document.getElementById('swim-canvas');
 const swimCtx = swimCanvas.getContext('2d');
 const fishes = [];
 
-// ===== 背景装饰气泡效果 =====
-function createBackgroundBubbles() {
-    const bubblesContainer = document.getElementById('background-bubbles');
-    if (!bubblesContainer) return;
-    
-    // 创建20个气泡（鱼缸页气泡更多）
-    for (let i = 0; i < 20; i++) {
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-        
-        // 随机大小 (15px - 60px)
-        const size = Math.random() * 45 + 15;
-        bubble.style.width = size + 'px';
-        bubble.style.height = size + 'px';
-        
-        // 随机位置
-        bubble.style.left = Math.random() * 100 + '%';
-        
-        // 随机动画持续时间 (5s - 10s)
-        const duration = Math.random() * 5 + 5;
-        bubble.style.animationDuration = duration + 's';
-        
-        // 随机延迟 (0s - 8s)
-        const delay = Math.random() * 8;
-        bubble.style.animationDelay = delay + 's';
-        
-        bubblesContainer.appendChild(bubble);
-    }
-}
-
-// 页面加载时创建背景气泡
-document.addEventListener('DOMContentLoaded', () => {
-    createBackgroundBubbles();
-});
-
 // Food system
 const foodPellets = [];
 const FOOD_SIZE = 8; // Increased size for better visibility
@@ -84,8 +49,8 @@ function createFeedingEffect(x, y) {
         type: 'feeding'
     };
 
-    // Create colorful splash particles with different colors
-    const colors = ['#4FC3F7', '#FF6B9D', '#A5D6A7', '#FFD54F', '#B39DDB'];
+    // Create purple splash particles
+    const colors = ['#6366F1', '#A5B4FC', '#C7D2FE', '#EEF2FF'];
     for (let i = 0; i < 12; i++) {
         const angle = (Math.PI * 2 * i) / 12;
         const velocity = Math.random() * 3 + 2;

@@ -177,7 +177,7 @@ function showError(message) {
 }
 
 // Add enter key support for search
-document.addEventListener('DOMContentLoaded', function () {    
+document.addEventListener('DOMContentLoaded', function () {
     // Check if there's a user ID in the URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const searchedUserId = urlParams.get('userId');

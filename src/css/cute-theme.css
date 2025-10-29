@@ -3,10 +3,10 @@
 
 /* ===== 配色系统 ===== */
 :root {
-  /* 主色 */
-  --primary-color: #4FC3F7;
-  --primary-light: #80D8FF;
-  --primary-dark: #0288D1;
+  /* 主色 - 紫色系 */
+  --primary-color: #6366F1;
+  --primary-light: #A5B4FC;
+  --primary-dark: #4F46E5;
   
   /* 辅助色 */
   --coral-pink: #FF6B9D;
@@ -27,10 +27,10 @@
   --dark-gray: #757575;
   
   /* 阴影 */
-  --shadow-sm: 0 2px 8px rgba(79, 195, 247, 0.15);
-  --shadow-md: 0 4px 15px rgba(79, 195, 247, 0.25);
-  --shadow-lg: 0 8px 30px rgba(79, 195, 247, 0.35);
-  --shadow-soft: 0 5px 20px rgba(79, 195, 247, 0.2);
+  --shadow-sm: 0 2px 8px rgba(99, 102, 241, 0.15);
+  --shadow-md: 0 4px 15px rgba(99, 102, 241, 0.25);
+  --shadow-lg: 0 8px 30px rgba(99, 102, 241, 0.35);
+  --shadow-soft: 0 5px 20px rgba(99, 102, 241, 0.2);
   
   /* 圆角 */
   --radius-sm: 8px;
@@ -459,18 +459,55 @@ body {
 /* ===== 可爱画布容器 ===== */
 .cute-canvas-container {
   position: relative;
-  display: inline-block;
+  display: block;
+  width: fit-content; /* 自适应内容宽度 */
   padding: 20px;
   background: var(--white);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   border: 3px solid var(--primary-light);
+  margin: 0 auto; /* 居中显示 */
 }
 
 .cute-canvas-container canvas {
   display: block;
   border-radius: var(--radius-md);
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 粒子容器 - 绝对定位，不影响布局 */
+.particles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* 粒子动画 */
+@keyframes explode {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes confetti {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) rotate(720deg) scale(0);
+    opacity: 0;
+  }
 }
 
 /* ===== 可爱加载动画 ===== */

@@ -1,40 +1,5 @@
 // Backend configuration is now in fish-utils.js
 
-// ===== 背景装饰气泡效果 =====
-function createBackgroundBubbles() {
-    const bubblesContainer = document.getElementById('background-bubbles');
-    if (!bubblesContainer) return;
-    
-    // 创建15个气泡
-    for (let i = 0; i < 15; i++) {
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-        
-        // 随机大小 (20px - 80px)
-        const size = Math.random() * 60 + 20;
-        bubble.style.width = size + 'px';
-        bubble.style.height = size + 'px';
-        
-        // 随机位置
-        bubble.style.left = Math.random() * 100 + '%';
-        
-        // 随机动画持续时间 (6s - 12s)
-        const duration = Math.random() * 6 + 6;
-        bubble.style.animationDuration = duration + 's';
-        
-        // 随机延迟 (0s - 5s)
-        const delay = Math.random() * 5;
-        bubble.style.animationDelay = delay + 's';
-        
-        bubblesContainer.appendChild(bubble);
-    }
-}
-
-// 页面加载时创建背景气泡
-document.addEventListener('DOMContentLoaded', () => {
-    createBackgroundBubbles();
-});
-
 // Fish Ranking System
 let allFishData = [];
 let currentSort = 'hot';
