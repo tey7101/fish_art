@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About DrawAFish - What is FishArt.Online? | Free Fish Drawing Tool</title>
+    <meta name="description" content="Learn about DrawAFish / FishArt.Online - the free AI-powered fish drawing tool. Discover how our online fish drawing game works, our mission, and join our creative community.">
+    <meta name="keywords" content="what is drawafish, about drawafish, drawafish.com, fish art online, about fish drawing tool, fish drawing website, AI fish drawing, online drawing tool">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="About FishArt.Online - Free Fish Drawing Tool">
+    <meta property="og:description" content="Discover the story behind DrawAFish - the AI-powered fish drawing game loved by thousands worldwide.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fishart.online/about.html">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://fishart.online/about.html">
+    
+    <link rel="stylesheet" href="src/css/style.css?v=2.0">
+    <link rel="stylesheet" href="src/css/cute-theme.css?v=2.0">
+    <link rel="icon" href="favicon.ico">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-601YXTKK0L"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-601YXTKK0L');
+    </script>
+    
+    <!-- Breadcrumb Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://fishart.online/"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "About",
+        "item": "https://fishart.online/about.html"
+      }]
+    }
+    </script>
+    
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "FishArt.Online",
+      "alternateName": "DrawAFish",
+      "url": "https://fishart.online",
+      "logo": "https://fishart.online/favicon.ico",
+      "description": "Free online AI-powered fish drawing tool and community. Draw fish, watch them swim, and share with artists worldwide.",
+      "foundingDate": "2024",
+      "sameAs": [
+        "https://github.com/aldenhallak/fishes"
+      ]
+    }
+    </script>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .about-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: white;
+            min-height: 100vh;
+        }
+        
+        .header-section {
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            color: white;
+            margin-bottom: 50px;
+        }
+        
+        .header-section h1 {
+            font-size: 3em;
+            margin: 0 0 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header-section p {
+            font-size: 1.3em;
+            margin: 0;
+            opacity: 0.95;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .breadcrumb a {
+            color: #6366F1;
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .content-section {
+            margin: 50px 0;
+        }
+        
+        .content-section h2 {
+            color: #4F46E5;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-left: 5px solid #6366F1;
+            padding-left: 20px;
+        }
+        
+        .content-section p {
+            font-size: 1.15em;
+            line-height: 1.8;
+            margin: 20px 0;
+        }
+        
+        .highlight-box {
+            background: #f8f9ff;
+            border-left: 5px solid #6366F1;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .features-list li {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border-left: 4px solid #6366F1;
+            font-size: 1.1em;
+        }
+        
+        .features-list li strong {
+            color: #4F46E5;
+        }
+        
+        .team-section {
+            background: #f8f9ff;
+            padding: 40px;
+            border-radius: 20px;
+            margin: 50px 0;
+        }
+        
+        .cta-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 50px 0;
+        }
+        
+        .cta-box h2 {
+            color: white;
+            border: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #6366F1;
+            padding: 18px 45px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline-item {
+            margin: 30px 0;
+            padding-left: 50px;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            background: #6366F1;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 0 0 2px #6366F1;
+        }
+        
+        .timeline-item h3 {
+            color: #4F46E5;
+            margin: 0 0 10px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .header-section h1 {
+                font-size: 2em;
+            }
+            
+            .about-container {
+                padding: 20px 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="about-container">
+        <div class="breadcrumb">
+            <a href="index.html">Home</a> / About
+        </div>
+        
+        <div class="header-section">
+            <h1>🐠 About FishArt.Online 🎨</h1>
+            <p>The Free AI-Powered Fish Drawing Tool & Community</p>
+        </div>
+        
+        <div class="content-section">
+            <h2>What is DrawAFish / FishArt.Online?</h2>
+            <p>
+                <strong>FishArt.Online</strong> (also known as <strong>DrawAFish</strong>, <strong>drawafish.com alternative</strong>) is a free online fish drawing tool that combines art, artificial intelligence, and community in a unique creative experience. 
+                We've built a platform where anyone - from children to professional artists - can <strong>draw a fish online</strong>, watch it swim in our <strong>global tank with 50,000+ doodles</strong>, and share it with artists worldwide.
+            </p>
+            <p>
+                Our <strong>AI-powered fish doodle game</strong> uses cutting-edge machine learning to recognize your fish drawings in real-time. As you draw, our neural network analyzes your artwork and provides instant feedback. 
+                Once validated, your fish joins thousands of others swimming in our animated community tank - see <strong>weird, creative, and funny fish</strong> from every corner of the world!
+            </p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">50K+</div>
+                <div class="stat-label">Fish Created</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1000+</div>
+                <div class="stat-label">Daily Artists</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Countries</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Free Forever</div>
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <h2>Our Mission</h2>
+            <div class="highlight-box">
+                <p style="font-size: 1.2em; margin: 0;">
+                    <strong>To make creative expression accessible, fun, and collaborative for everyone.</strong>
+                </p>
+                <p style="margin: 20px 0 0 0;">
+                    We believe that technology should empower creativity, not complicate it. That's why FishArt.Online is completely free, 
+                    requires no signup, and works on any device. Whether you're an artist looking for a creative outlet, a teacher searching for 
+                    educational tools, or a parent wanting safe online activities for kids, we've got you covered.
+                </p>
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <h2>Key Features</h2>
+            <ul class="features-list">
+                <li><strong>🤖 Real-Time AI Validation:</strong> Our neural network recognizes fish drawings as you create them, providing instant feedback and helping you improve.</li>
+                <li><strong>🎨 Easy Drawing Tools:</strong> Intuitive canvas that works with mouse, trackpad, or touch input. No artistic experience required!</li>
+                <li><strong>🌊 Animated Fish Tank:</strong> Watch your fish swim in a beautiful animated tank alongside creations from artists worldwide.</li>
+                <li><strong>⭐ Community Voting:</strong> Discover amazing fish art and vote on your favorites. Compete for the top spot on our leaderboards!</li>
+                <li><strong>🏆 Custom Collections:</strong> Create themed fish tank collections and share your curated galleries with friends.</li>
+                <li><strong>📱 Works Everywhere:</strong> Fully responsive design works perfectly on phones, tablets, and desktop computers.</li>
+                <li><strong>👥 Safe Community:</strong> Family-friendly environment with moderation to ensure a positive experience for all ages.</li>
+                <li><strong>💰 Always Free:</strong> No hidden costs, premium features, or advertisements. Pure creative fun!</li>
+            </ul>
+        </div>
+        
+        <div class="content-section">
+            <h2>How Does the AI Work?</h2>
+            <p>
+                Our fish recognition system uses a <strong>convolutional neural network</strong> trained on thousands of fish drawings. 
+                The model runs entirely in your browser using <strong>ONNX Runtime Web</strong>, which means:
+            </p>
+            <ul style="font-size: 1.1em; line-height: 2;">
+                <li>✅ <strong>No data leaves your device</strong> - your drawings are private until you choose to share</li>
+                <li>✅ <strong>Instant real-time feedback</strong> - the AI analyzes every brush stroke immediately</li>
+                <li>✅ <strong>Works offline</strong> - once the page loads, the AI runs locally in your browser</li>
+                <li>✅ <strong>Fast and efficient</strong> - optimized for all devices, even phones</li>
+            </ul>
+            <p>
+                The AI was originally developed using <strong>PyTorch</strong>, trained on diverse fish drawings, and exported to ONNX format for web deployment. 
+                This cutting-edge technology makes DrawAFish one of the most innovative online drawing tools available!
+            </p>
+        </div>
+        
+        <div class="content-section">
+            <h2>Who Uses FishArt.Online?</h2>
+            <p><strong>🎓 Educators & Students:</strong> Teachers use our fish drawing tool in art classes, computer science lessons, and as a fun educational break. Students love the instant feedback and competitive elements!</p>
+            
+            <p><strong>👨‍👩‍👧‍👦 Families:</strong> Parents appreciate our safe, ad-free platform where kids can express creativity. Many families have fish-drawing competitions!</p>
+            
+            <p><strong>🎨 Artists & Designers:</strong> Professional creatives use DrawAFish for quick drawing practice, warming up, or as a relaxing creative break during the workday.</p>
+            
+            <p><strong>🧠 AI Enthusiasts:</strong> Tech lovers enjoy seeing AI in action, understanding how neural networks work, and exploring the intersection of art and technology.</p>
+            
+            <p><strong>🌍 Global Community:</strong> With users in over 100 countries, DrawAFish is bringing together a diverse community of creators from all walks of life.</p>
+        </div>
+        
+        <div class="team-section">
+            <h2 style="color: #4F46E5; margin-top: 0;">Our Story</h2>
+            <p style="font-size: 1.1em; line-height: 1.8;">
+                FishArt.Online began as an <strong>open-source project</strong> exploring the creative possibilities of AI. 
+                Inspired by the simple joy of drawing and the power of modern machine learning, we wanted to create something that was both technologically impressive and incredibly fun to use.
+            </p>
+            <p style="font-size: 1.1em; line-height: 1.8;">
+                What started as an experiment quickly grew into a community. Thousands of artists began drawing fish, sharing their creations, and inspiring each other. 
+                Today, FishArt.Online is used by schools, families, and creative individuals worldwide.
+            </p>
+            <p style="font-size: 1.1em; line-height: 1.8;">
+                We're committed to keeping this platform <strong>free, open-source, and accessible</strong> forever. 
+                Check out our code on <a href="https://github.com/aldenhallak/fishes" target="_blank" rel="noopener" style="color: #6366F1;">GitHub</a>!
+            </p>
+        </div>
+        
+        <div class="content-section">
+            <h2>Our Values</h2>
+            <ul class="features-list">
+                <li><strong>🌟 Accessibility:</strong> Creative tools should be free and available to everyone, regardless of location, device, or skill level.</li>
+                <li><strong>🎓 Education:</strong> We believe in the power of technology to educate and inspire. Our tool teaches art, AI concepts, and creative thinking.</li>
+                <li><strong>🤝 Community:</strong> The best creativity happens when people share, collaborate, and inspire each other.</li>
+                <li><strong>🔒 Privacy:</strong> Your data is yours. We don't track, sell, or exploit user information.</li>
+                <li><strong>💚 Open Source:</strong> We believe in transparent, collaborative development and giving back to the community.</li>
+            </ul>
+        </div>
+        
+        <div class="content-section">
+            <h2>Technology Stack</h2>
+            <p>For those interested in the technical details:</p>
+            <ul style="font-size: 1.1em; line-height: 2;">
+                <li><strong>Frontend:</strong> HTML5 Canvas, Vanilla JavaScript, CSS3</li>
+                <li><strong>AI Model:</strong> PyTorch → ONNX, running via ONNX Runtime Web</li>
+                <li><strong>Backend:</strong> Serverless functions for image storage and processing</li>
+                <li><strong>Database:</strong> Firebase/Firestore for real-time data</li>
+                <li><strong>Hosting:</strong> Vercel for blazing-fast global deployment</li>
+            </ul>
+            <p>Interested in contributing? Visit our <a href="https://github.com/aldenhallak/fishes" target="_blank" rel="noopener" style="color: #6366F1;">GitHub repository</a> to get started!</p>
+        </div>
+        
+        <div class="cta-box">
+            <h2>Ready to Create Your Fish?</h2>
+            <p style="font-size: 1.2em; margin: 20px 0;">Join thousands of artists in the DrawAFish community!</p>
+            <a href="index.html" class="cta-button">Start Drawing Now →</a>
+            <p style="margin-top: 25px; opacity: 0.95;">No signup required • Works on all devices • 100% free forever</p>
+        </div>
+        
+        <div class="content-section">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div style="margin: 20px 0; padding: 20px; background: #f8f9ff; border-radius: 10px;">
+                <h3 style="color: #4F46E5; margin-top: 0;">What is drawafish.com vs fishart.online?</h3>
+                <p>We're the same platform! FishArt.Online is our official domain. Some users know us as "DrawAFish" from our origins. Both names refer to the same fish drawing tool and community.</p>
+            </div>
+            
+            <div style="margin: 20px 0; padding: 20px; background: #f8f9ff; border-radius: 10px;">
+                <h3 style="color: #4F46E5; margin-top: 0;">Is this really free? No hidden costs?</h3>
+                <p>Absolutely! FishArt.Online is 100% free with no hidden costs, premium tiers, or paywalls. We're committed to keeping creative tools accessible to everyone.</p>
+            </div>
+            
+            <div style="margin: 20px 0; padding: 20px; background: #f8f9ff; border-radius: 10px;">
+                <h3 style="color: #4F46E5; margin-top: 0;">Do I need to create an account?</h3>
+                <p>No signup required to draw and share fish! You only need an account if you want to save custom fish tank collections or track your creations over time.</p>
+            </div>
+            
+            <div style="margin: 20px 0; padding: 20px; background: #f8f9ff; border-radius: 10px;">
+                <h3 style="color: #4F46E5; margin-top: 0;">Can I use this in my classroom?</h3>
+                <p>Absolutely! Many teachers use FishArt.Online for art classes, STEM education, and creative breaks. It's safe, educational, and students love it!</p>
+            </div>
+        </div>
+        
+        <div class="content-section">
+            <h2>Explore More</h2>
+            <ul style="font-size: 1.1em; line-height: 2;">
+                <li><a href="index.html" style="color: #6366F1;">Draw a Fish Online - Start Creating</a></li>
+                <li><a href="how-to-draw-a-fish.html" style="color: #6366F1;">How to Draw a Fish - Complete Tutorial</a></li>
+                <li><a href="fish-drawing-game.html" style="color: #6366F1;">Fish Drawing Game - Play & Compete</a></li>
+                <li><a href="tank.html" style="color: #6366F1;">Community Fish Tank - Watch All Fish</a></li>
+                <li><a href="rank.html" style="color: #6366F1;">Rankings - Vote on Best Drawings</a></li>
+                <li><a href="fishtanks.html" style="color: #6366F1;">My Tanks - Create Collections</a></li>
+            </ul>
+        </div>
+        
+        <footer style="margin-top: 60px; padding-top: 30px; border-top: 2px solid #e0e0e0; text-align: center; color: #666;">
+            <p style="font-size: 1.1em; margin-bottom: 15px;">🐠 About DrawAFish / FishArt.Online</p>
+            <p>
+                <a href="index.html" style="color: #6366F1; margin: 0 15px;">Draw Now</a> |
+                <a href="how-to-draw-a-fish.html" style="color: #6366F1; margin: 0 15px;">Tutorial</a> |
+                <a href="fish-drawing-game.html" style="color: #6366F1; margin: 0 15px;">Game</a> |
+                <a href="https://github.com/aldenhallak/fishes" target="_blank" rel="noopener" style="color: #6366F1; margin: 0 15px;">GitHub</a>
+            </p>
+            <p style="margin-top: 20px;">&copy; 2024 FishArt.Online - Free Online Fish Drawing Tool</p>
+        </footer>
+    </div>
+</body>
+</html>
+

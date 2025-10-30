@@ -193,7 +193,7 @@ Test sharing:
 
 ## 📊 Analytics (Optional)
 
-The site includes Google Analytics (ID: G-GS1GYSFBPX).
+The site includes Google Analytics (ID: G-601YXTKK0L).
 
 To use your own:
 1. Create Google Analytics property

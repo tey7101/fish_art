@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fish Tank - Watch Community Fish Swim | FishArt.Online</title>
-    <meta name="description" content="Watch all the community-created fish swim together in our interactive fish tank. View the most recent, popular, or random fish drawings from our creative community.">
-    <meta name="keywords" content="fish tank, swimming fish, community art, fish animation, digital aquarium, fish gallery">
+    <title>Global Fish Tank - Watch Everyone's Doodles Swim Live | FishArt.Online</title>
+    <meta name="description" content="Watch 50K+ fish doodles swim in our global tank! See weird, creative & funny fish from artists worldwide. A living aquarium of community art. Free online fish tank.">
+    <meta name="keywords" content="global fish tank, watch fish swim, fish doodles online, community fish tank, virtual aquarium, weird fish drawings, funny fish art, online fish tank, fish art gallery">
     
     <!-- Open Graph tags -->
     <meta property="og:title" content="Fish Tank - Watch Community Fish Swim">
@@ -468,13 +468,32 @@
     </style>
     
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GS1GYSFBPX"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-601YXTKK0L"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-GS1GYSFBPX');
+      gtag('config', 'G-601YXTKK0L');
+    </script>
+    
+    <!-- Breadcrumb Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://fishart.online/"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Fish Tank",
+        "item": "https://fishart.online/tank.html"
+      }]
+    }
     </script>
 </head>
 <body>
@@ -510,9 +529,13 @@
     <div class="control-row" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
       <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
         <h1 style="margin: 0; font-size: 20px; color: #6366F1; display: flex; align-items: center; gap: 6px;">
-          🐟 FishArt AI
+          🐟 Global Fish Tank
         </h1>
-        
+        <p style="margin: 4px 0 0 0; font-size: 13px; color: #666; font-weight: 500;">
+          🌍 A living aquarium of 50K+ doodles from artists worldwide
+        </p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 8px;">
         <!-- 排序控制 -->
         <div style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.5); padding: 6px 12px; border-radius: 12px; backdrop-filter: blur(10px);">
           <span style="font-size: 16px;">🔍</span>
@@ -584,12 +607,12 @@
     // Initialize navigation authentication
     initializeAuthNavigation();
     
-    // Share button handler
+    // Share button handler - directly show custom modal for better UX
     const tankShareBtn = document.getElementById('tank-share-btn');
     if (tankShareBtn) {
       tankShareBtn.addEventListener('click', () => {
         if (window.socialShare) {
-          window.socialShare.share('native');
+          window.socialShare.showShareModal();
         }
       });
       
