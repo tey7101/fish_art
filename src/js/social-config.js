@@ -11,16 +11,16 @@ const SOCIAL_CONFIG = {
 
   // X (formerly Twitter) configuration
   x: {
-    handle: "YourXHandle", // TODO: Replace with your X handle (without @)
-    url: "https://x.com/YourXHandle", // TODO: Replace with your X URL
+    handle: "ZING__AI", // Your X handle (without @)
+    url: "https://x.com/ZING__AI", // Your X URL
     displayText: "Follow on X",
     followerCount: "10K+" // Optional: Update this manually or remove
   },
   
   // Legacy Twitter reference for compatibility
   twitter: {
-    handle: "YourXHandle",
-    url: "https://x.com/YourXHandle",
+    handle: "ZING__AI",
+    url: "https://x.com/ZING__AI",
     displayText: "Follow on X",
     followerCount: "10K+"
   },
