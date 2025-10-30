@@ -120,10 +120,20 @@ The app uses machine learning for real-time fish recognition:
 4. Deploy the static site (e.g., Vercel, Netlify, Firebase Hosting).
 5. Ensure the backend endpoint in `src/js/fish-utils.js` points to the deployed `fish-be` instance.
 
-## Credits
-- AI model and training: [fish-trainer](https://github.com/aldenhallak/fish-trainer)
-- Backend: [fish-be](https://github.com/aldenhallak/fish-be)
-- Frontend & UI: This repository
+## Credits & Attribution
+
+**This project is based on [DrawAFish](https://github.com/aldenhallak/fishes) by [aldenhallak](https://github.com/aldenhallak).**
+
+### Original Components:
+- **Core concept & frontend**: [DrawAFish (fishes)](https://github.com/aldenhallak/fishes) by aldenhallak
+- **AI model & training**: [fish-trainer](https://github.com/aldenhallak/fish-trainer)
+- **Backend**: [fish-be](https://github.com/aldenhallak/fish-be)
+
+### This Fork:
+- Extended UI/UX improvements
+- Additional SEO and content pages
+- Enhanced community features
+- Chinese localization support
 
 ---
 
