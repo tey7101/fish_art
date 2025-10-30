@@ -30,9 +30,10 @@ class SocialShare {
       });
       return true;
     } catch (err) {
-      // User cancelled or share failed
-      console.log('Native share cancelled or failed:', err);
-      return false;
+      // User cancelled or share failed - show custom modal as fallback
+      console.log('Native share cancelled or failed, showing custom modal:', err);
+      this.showShareModal(customText, customUrl);
+      return true;
     }
   }
 
@@ -65,13 +66,25 @@ class SocialShare {
   }
 
   /**
-   * Share to LinkedIn
+   * Share to Instagram (opens Instagram app or web)
    */
-  shareToLinkedIn(customUrl) {
+  shareToInstagram(customUrl) {
     const url = customUrl || this.siteUrl;
-    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-    
-    this.openPopup(shareUrl, 'LinkedIn Share', 550, 420);
+    // Instagram doesn't have a direct URL share, so we'll copy the link and open Instagram
+    this.copyLink(url).then(() => {
+      // Try to open Instagram app on mobile, or web on desktop
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.location.href = 'instagram://';
+        // Fallback to web if app is not installed
+        setTimeout(() => {
+          window.open('https://www.instagram.com/', '_blank');
+        }, 500);
+      } else {
+        window.open('https://www.instagram.com/', '_blank');
+      }
+      alert('Link copied! You can now paste it in your Instagram post or story.');
+    });
   }
 
   /**
@@ -124,7 +137,13 @@ class SocialShare {
    * Universal share method - tries native first, falls back to specific platform
    */
   async share(platform, customText, customUrl) {
-    // Try native share on mobile first
+    // If native share requested but not supported, show custom share modal
+    if (platform === 'native' && !this.isNativeShareSupported()) {
+      this.showShareModal(customText, customUrl);
+      return true;
+    }
+    
+    // Try native share on mobile
     if (this.isNativeShareSupported() && platform === 'native') {
       return await this.shareNative(customText, customUrl);
     }
@@ -138,8 +157,8 @@ class SocialShare {
       case 'facebook':
         this.shareToFacebook(customUrl);
         break;
-      case 'linkedin':
-        this.shareToLinkedIn(customUrl);
+      case 'instagram':
+        this.shareToInstagram(customUrl);
         break;
       case 'reddit':
         this.shareToReddit(customText, customUrl);
@@ -152,6 +171,76 @@ class SocialShare {
     }
     
     return true;
+  }
+
+  /**
+   * Show share modal with platform options
+   */
+  showShareModal(customText, customUrl) {
+    // Remove existing modal if any
+    const existingModal = document.querySelector('.share-modal-overlay');
+    if (existingModal) {
+      existingModal.remove();
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'share-modal-overlay';
+    overlay.style.cssText = 'position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(4px);';
+    
+    const modal = document.createElement('div');
+    modal.style.cssText = 'background: white; padding: 30px; border-radius: 16px; max-width: 400px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center;';
+    
+    modal.innerHTML = `
+      <h3 style="margin: 0 0 20px 0; color: #6366F1; font-size: 20px;">📤 Share FishArt AI</h3>
+      <div id="share-buttons-container" style="display: flex; flex-direction: column; gap: 10px;"></div>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Add share buttons
+    const container = modal.querySelector('#share-buttons-container');
+    const platforms = [
+      { platform: 'x', label: 'Share on X', icon: '✖️', color: '#000' },
+      { platform: 'facebook', label: 'Share on Facebook', icon: '📘', color: '#1877F2' },
+      { platform: 'instagram', label: 'Share on Instagram', icon: '📷', color: '#E4405F' },
+      { platform: 'reddit', label: 'Share on Reddit', icon: '🔶', color: '#FF4500' },
+      { platform: 'copy', label: 'Copy Link', icon: '📋', color: '#6366F1' }
+    ];
+    
+    platforms.forEach(({ platform, label, icon, color }) => {
+      const btn = document.createElement('button');
+      btn.style.cssText = `padding: 12px 20px; background: ${color}; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform 0.2s;`;
+      btn.innerHTML = `${icon} ${label}`;
+      btn.onmouseover = () => btn.style.transform = 'scale(1.02)';
+      btn.onmouseout = () => btn.style.transform = 'scale(1)';
+      
+      if (platform === 'copy') {
+        btn.onclick = async () => {
+          const success = await this.copyLink(customUrl);
+          if (success) {
+            btn.innerHTML = '✅ Link Copied!';
+            setTimeout(() => {
+              btn.innerHTML = `${icon} ${label}`;
+            }, 2000);
+          }
+        };
+      } else {
+        btn.onclick = () => {
+          this.share(platform, customText, customUrl);
+          overlay.remove();
+        };
+      }
+      
+      container.appendChild(btn);
+    });
+    
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.remove();
+      }
+    });
   }
 
   /**
@@ -173,7 +262,7 @@ class SocialShare {
       x: '✖️',
       twitter: '✖️', // Legacy support
       facebook: '📘',
-      linkedin: '💼',
+      instagram: '📷',
       reddit: '🔶',
       discord: '💬',
       copy: '📋',
@@ -195,16 +284,11 @@ class SocialShare {
     const container = document.createElement('div');
     container.className = `share-menu ${containerClass || ''}`;
 
-    // Native share button for mobile
-    if (this.isNativeShareSupported()) {
-      container.appendChild(this.createShareButton('native', 'Share', 'btn-primary'));
-    } else {
-      // Desktop: show individual platform buttons
-      container.appendChild(this.createShareButton('x', 'X', 'btn-x'));
-      container.appendChild(this.createShareButton('facebook', 'Facebook', 'btn-facebook'));
-      container.appendChild(this.createShareButton('linkedin', 'LinkedIn', 'btn-linkedin'));
-      container.appendChild(this.createShareButton('reddit', 'Reddit', 'btn-reddit'));
-    }
+    // Show individual platform buttons (removed native share)
+    container.appendChild(this.createShareButton('x', 'X', 'btn-x'));
+    container.appendChild(this.createShareButton('facebook', 'Facebook', 'btn-facebook'));
+    container.appendChild(this.createShareButton('instagram', 'Instagram', 'btn-instagram'));
+    container.appendChild(this.createShareButton('reddit', 'Reddit', 'btn-reddit'));
 
     // Copy link button (always show)
     const copyBtn = this.createShareButton('copy', 'Copy Link', 'btn-copy');

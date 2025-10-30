@@ -19,4 +19,4 @@ Allow: /src/js/
 Allow: /public/
 
 # Sitemap location
-Sitemap: https://drawafish.com/sitemap.xml
+Sitemap: https://fishart.online/sitemap.xml

@@ -213,35 +213,41 @@ function showSuccessModal(fishImageUrl, needsModeration) {
     
     const modalHTML = `
         <div class="success-modal-content">
-            <h2>🎉 ${needsModeration ? 'Fish Submitted!' : 'Your Fish is Swimming!'}</h2>
+            <h2 style="color: #27ae60; margin-bottom: 20px;">🎉 ${needsModeration ? 'Fish Submitted!' : 'Your Fish is Swimming!'}</h2>
             
             <div class="fish-preview">
                 <img src="${fishImageUrl}" alt="Your fish" style="max-width: 200px; border-radius: 10px; border: 3px solid #27ae60;">
             </div>
             
-            <p class="cta-text">
+            <p class="cta-text" style="font-size: 16px; margin: 20px 0;">
                 ${needsModeration 
                     ? 'Your fish will appear in the tank after review.' 
                     : 'Love creating with AI? Join our community!'}
             </p>
             
-            <div class="social-actions">
-                <a href="${config.twitter.url}" target="_blank" rel="noopener noreferrer" class="btn btn-twitter">
-                    🐦 ${config.twitter.displayText}
+            <div class="social-actions" style="display: flex; gap: 12px; justify-content: center; margin: 20px 0;">
+                <a href="${config.twitter.url}" target="_blank" rel="noopener noreferrer" class="btn btn-twitter" style="display: flex; align-items: center; gap: 6px; padding: 10px 20px; background: #000; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    Follow on X
                 </a>
-                <a href="${config.discord.inviteUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-discord">
-                    💬 ${config.discord.displayText}
+                <a href="${config.discord.inviteUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-discord" style="display: flex; align-items: center; gap: 6px; padding: 10px 20px; background: #5865F2; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+                    </svg>
+                    Join Discord
                 </a>
             </div>
             
-            <div class="cta-text" style="margin-top: 20px;">
-                <strong>Share your creation:</strong>
+            <div class="cta-text" style="margin-top: 24px; font-weight: 600;">
+                Share your creation:
             </div>
             
             <div id="share-buttons-container"></div>
             
-            <div style="margin-top: 20px; text-align: center;">
-                <button onclick="window.location.href='tank.html'" class="btn btn-secondary" style="padding: 12px 30px;">
+            <div style="margin-top: 24px; text-align: center;">
+                <button onclick="window.location.href='tank.html'" class="cute-button cute-button-primary" style="padding: 12px 30px;">
                     View Fish Tank →
                 </button>
             </div>
@@ -349,20 +355,30 @@ swimBtn.addEventListener('click', async () => {
     // Show different modal based on fish validity
     if (!isFish) {
         // Show moderation warning modal for low-scoring fish
-        showModal(`<div style='text-align:center;'>
-            <div style='color:#ff6b35;font-weight:bold;margin-bottom:12px;'>Low Fish Score</div>
-            <div style='margin-bottom:16px;line-height:1.4;'>i dont think this is a fish but you can submit it anyway and ill review it</div>
-            <div style='margin-bottom:16px;'>Sign your art:<br><input id='artist-name' value='${escapeHtml(defaultName)}' style='margin:10px 0 16px 0;padding:6px;width:80%;max-width:180px;'></div>
-            <button id='submit-fish' >Submit for Review</button>
-            <button id='cancel-fish' >Cancel</button>
+        showModal(`<div style='text-align:center; padding: 20px;'>
+            <div style='color:#ff6b35; font-weight:bold; font-size: 18px; margin-bottom:16px;'>⚠️ Low Fish Score</div>
+            <div style='margin-bottom:20px; line-height:1.6; color: #666;'>I don't think this is a fish, but you can submit it anyway and I'll review it.</div>
+            <div style='margin-bottom:20px;'>
+                <label style='display: block; margin-bottom: 8px; font-weight: 500;'>Sign your art:</label>
+                <input id='artist-name' value='${escapeHtml(defaultName)}' style='margin:0; padding:10px; width:80%; max-width:250px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;' placeholder='Your name'>
+            </div>
+            <div style='display: flex; gap: 12px; justify-content: center;'>
+                <button id='submit-fish' class='cute-button cute-button-primary' style='padding: 10px 24px;'>Submit for Review</button>
+                <button id='cancel-fish' class='cute-button' style='padding: 10px 24px; background: #e0e0e0;'>Cancel</button>
+            </div>
         </div>`, () => { });
     } else {
         // Show normal submission modal for good fish
-        showModal(`<div style='text-align:center;'>
-            <div style='color:#27ae60;font-weight:bold;margin-bottom:12px;'>Great Fish!</div>
-            <div style='margin-bottom:16px;'>Sign your art:<br><input id='artist-name' value='${escapeHtml(defaultName)}' style='margin:10px 0 16px 0;padding:6px;width:80%;max-width:180px;'></div>
-            <button id='submit-fish' style='padding:6px 18px;background:#27ae60;color:white;border:none;border-radius:4px;'>Submit</button>
-            <button id='cancel-fish' style='padding:6px 18px;margin-left:10px;background:#ccc;border:none;border-radius:4px;'>Cancel</button>
+        showModal(`<div style='text-align:center; padding: 20px;'>
+            <div style='color:#27ae60; font-weight:bold; font-size: 18px; margin-bottom:16px;'>✨ Great Fish!</div>
+            <div style='margin-bottom:20px;'>
+                <label style='display: block; margin-bottom: 8px; font-weight: 500;'>Sign your art:</label>
+                <input id='artist-name' value='${escapeHtml(defaultName)}' style='margin:0; padding:10px; width:80%; max-width:250px; border: 2px solid #27ae60; border-radius: 6px; font-size: 14px;' placeholder='Your name'>
+            </div>
+            <div style='display: flex; gap: 12px; justify-content: center;'>
+                <button id='submit-fish' class='cute-button cute-button-primary' style='padding: 10px 24px; background:#27ae60;'>Submit</button>
+                <button id='cancel-fish' class='cute-button' style='padding: 10px 24px; background: #e0e0e0;'>Cancel</button>
+            </div>
         </div>`, () => { });
     }
     
@@ -378,7 +394,20 @@ swimBtn.addEventListener('click', async () => {
 });
 
 // Paint options UI - 简化配色方案
-const colors = ['#000000', '#4FC3F7', '#FF6B9D', '#A5D6A7', '#FFD54F'];
+const colors = [
+    '#000000', // 黑色
+    '#FFFFFF', // 白色
+    '#FF6B6B', // 红色
+    '#FFA500', // 橙色
+    '#FFD54F', // 黄色
+    '#A5D6A7', // 浅绿色
+    '#4FC3F7', // 浅蓝色
+    '#4169E1', // 深蓝色
+    '#FF6B9D', // 粉红色
+    '#9B59B6', // 紫色
+    '#8B4513', // 棕色
+    '#95A5A6'  // 灰色
+];
 let currentColor = colors[0];
 let currentLineWidth = 6;
 let undoStack = [];

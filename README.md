@@ -1,10 +1,10 @@
-# DrawAFish.com - Interactive Fish Drawing
+# FishArt.Online - Interactive Fish Drawing
 
-🐟 **[DrawAFish.com](https://drawafish.com)** 🐟
+🐟 **[FishArt.Online](https://fishart.online)** 🐟
 
 Users have their fish drawings AI-validated in real time and watch their creations swim in a shared tank. 
 
-[![Fish Drawing](https://img.shields.io/badge/Game-Live-brightgreen)](https://drawafish.com)
+[![Fish Drawing](https://img.shields.io/badge/Game-Live-brightgreen)](https://fishart.online)
 [![AI Powered](https://img.shields.io/badge/AI-ONNX-blue)](https://onnx.ai/)
 [![Community](https://img.shields.io/badge/Community-Voting-orange)](#features)
 
@@ -45,7 +45,7 @@ The app uses machine learning for real-time fish recognition:
 
 ## 🚀 Getting Started
 
-1. **Visit [DrawAFish.com](https://drawafish.com)**
+1. **Visit [FishArt.Online](https://fishart.online)**
 2. **Start drawing** on the canvas (fish should face right!)
 3. **Watch the AI** give feedback through background color changes
 4. **Submit your fish** when you're happy with it
@@ -105,11 +105,11 @@ The app uses machine learning for real-time fish recognition:
 
 ### [fish-trainer](https://github.com/aldenhallak/fish-trainer)
 - Contains the PyTorch code for training the fish doodle classifier.
-- Exports the trained model to ONNX format, which is used by DrawAFish.com for in-browser inference.
+- Exports the trained model to ONNX format, which is used by FishArt.Online for in-browser inference.
 - Includes data augmentation, preprocessing, and model evaluation scripts.
 
 ### [fish-be](https://github.com/aldenhallak/fish-be)
-- The backend for DrawAFish.com, deployed as a serverless function (I'm using cloud run :~)).
+- The backend for FishArt.Online, deployed as a serverless function (I'm using cloud run :~)).
 - Handles fish image uploads, processes and stores submissions, and returns the canonical fish image for the tank.
 - May also provide endpoints for moderation, stats, or gallery features.
 
