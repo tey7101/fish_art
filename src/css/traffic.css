@@ -123,14 +123,14 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.98), rgba(118, 75, 162, 0.98));
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(45, 45, 45, 0.98));
   backdrop-filter: blur(10px);
-  box-shadow: 0 -4px 20px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
   display: none; /* Hidden by default, shown on mobile */
   justify-content: space-around;
   padding: 6px 0;
   z-index: 999;
-  border-top: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .mobile-social-bar button {
@@ -435,14 +435,7 @@ body {
   }
 }
 
-/* ===== Dark theme styles (now default for better cross-browser compatibility) ===== */
-/* Mobile social bar already has dark background by default */
-.mobile-social-bar {
-  background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(45, 45, 45, 0.98));
-  border-top: 1px solid #333;
-}
-
-/* Dark theme modal support */
+/* ===== Dark theme modal support ===== */
 @media (prefers-color-scheme: dark) {
   .success-modal-content {
     background: #2d2d2d;
