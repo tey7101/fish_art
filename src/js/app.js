@@ -359,55 +359,167 @@ async function submitFish(artist, needsModeration = false) {
     }
 }
 
+// Add flag to prevent multiple simultaneous submissions
+let isSubmitting = false;
+
 swimBtn.addEventListener('click', async () => {
-    // Check fish validity for warning purposes
-    const isFish = await verifyFishDoodle(canvas);
-    lastFishCheck = isFish;
-    showFishWarning(!isFish);
-    
-    // Get saved artist name or use Anonymous
-    const savedArtist = localStorage.getItem('artistName');
-    const defaultName = (savedArtist && savedArtist !== 'Anonymous') ? savedArtist : 'Anonymous';
-    
-    // Show different modal based on fish validity
-    if (!isFish) {
-        // Show moderation warning modal for low-scoring fish
-        showModal(`<div style='text-align:center; padding: 20px;'>
-            <div style='color:#ff6b35; font-weight:bold; font-size: 18px; margin-bottom:16px;'>⚠️ Low Fish Score</div>
-            <div style='margin-bottom:20px; line-height:1.6; color: #666;'>I don't think this is a fish, but you can submit it anyway and I'll review it.</div>
-            <div style='margin-bottom:20px;'>
-                <label style='display: block; margin-bottom: 8px; font-weight: 500;'>Sign your art:</label>
-                <input id='artist-name' value='${escapeHtml(defaultName)}' style='margin:0; padding:10px; width:80%; max-width:250px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;' placeholder='Your name'>
-            </div>
-            <div style='display: flex; gap: 12px; justify-content: center;'>
-                <button id='submit-fish' class='cute-button cute-button-primary' style='padding: 10px 24px;'>Submit for Review</button>
-                <button id='cancel-fish' class='cute-button' style='padding: 10px 24px; background: #e0e0e0;'>Cancel</button>
-            </div>
-        </div>`, () => { });
-    } else {
-        // Show normal submission modal for good fish
-        showModal(`<div style='text-align:center; padding: 20px;'>
-            <div style='color:#27ae60; font-weight:bold; font-size: 18px; margin-bottom:16px;'>✨ Great Fish!</div>
-            <div style='margin-bottom:20px;'>
-                <label style='display: block; margin-bottom: 8px; font-weight: 500;'>Sign your art:</label>
-                <input id='artist-name' value='${escapeHtml(defaultName)}' style='margin:0; padding:10px; width:80%; max-width:250px; border: 2px solid #27ae60; border-radius: 6px; font-size: 14px;' placeholder='Your name'>
-            </div>
-            <div style='display: flex; gap: 12px; justify-content: center;'>
-                <button id='submit-fish' class='cute-button cute-button-primary' style='padding: 10px 24px; background:#27ae60;'>Submit</button>
-                <button id='cancel-fish' class='cute-button' style='padding: 10px 24px; background: #e0e0e0;'>Cancel</button>
-            </div>
-        </div>`, () => { });
+    // Prevent multiple clicks while processing
+    if (isSubmitting) {
+        console.log('Already processing a submission, please wait...');
+        return;
     }
     
-    document.getElementById('submit-fish').onclick = async () => {
-        const artist = document.getElementById('artist-name').value.trim() || 'Anonymous';
-        // Save artist name to localStorage for future use
-        localStorage.setItem('artistName', artist);
-        await submitFish(artist, !isFish); // Pass moderation flag
-    };
-    document.getElementById('cancel-fish').onclick = () => {
-        document.querySelector('div[style*="z-index: 9999"]')?.remove();
-    };
+    // Check if canvas is empty
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const pixels = imageData.data;
+    let hasDrawing = false;
+    for (let i = 3; i < pixels.length; i += 4) {
+        if (pixels[i] !== 0) { // Check alpha channel
+            hasDrawing = true;
+            break;
+        }
+    }
+    
+    if (!hasDrawing) {
+        showModal(`<div style='text-align:center; padding: 20px;'>
+            <div style='color:#ff6b35; font-weight:bold; font-size: 18px; margin-bottom:16px;'>📝 Canvas is Empty</div>
+            <div style='margin-bottom:20px; line-height:1.6; color: #666;'>Please draw a fish first!</div>
+            <div style='display: flex; gap: 12px; justify-content: center;'>
+                <button onclick="this.closest('[style*=\\'z-index: 9999\\']')?.remove()" class='cute-button cute-button-primary' style='padding: 10px 24px;'>OK</button>
+            </div>
+        </div>`, () => { });
+        return;
+    }
+    
+    try {
+        // Set processing flag and disable button
+        isSubmitting = true;
+        swimBtn.disabled = true;
+        swimBtn.style.opacity = '0.6';
+        swimBtn.style.cursor = 'wait';
+        const originalHTML = swimBtn.innerHTML;
+        swimBtn.innerHTML = '<span class="button-icon">⏳</span><span class="button-text">Processing...</span>';
+        
+        // Check if model is loaded, if not try to load it
+        if (!ortSession) {
+            console.log('Model not loaded, attempting to load...');
+            try {
+                await loadFishModel();
+            } catch (loadError) {
+                console.error('Failed to load model:', loadError);
+                // Model load failed, but allow submission without AI validation
+                showModal(`<div style='text-align:center; padding: 20px;'>
+                    <div style='color:#ffa500; font-weight:bold; font-size: 18px; margin-bottom:16px;'>⚠️ AI Unavailable</div>
+                    <div style='margin-bottom:20px; line-height:1.6; color: #666;'>AI validation is currently unavailable. Your drawing will be submitted for manual review.</div>
+                    <div style='margin-bottom:20px;'>
+                        <label style='display: block; margin-bottom: 8px; font-weight: 500;'>Sign your art:</label>
+                        <input id='artist-name' value='Anonymous' style='margin:0; padding:10px; width:80%; max-width:250px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;' placeholder='Your name'>
+                    </div>
+                    <div style='display: flex; gap: 12px; justify-content: center;'>
+                        <button id='submit-fish' class='cute-button cute-button-primary' style='padding: 10px 24px;'>Submit for Review</button>
+                        <button id='cancel-fish' class='cute-button' style='padding: 10px 24px; background: #e0e0e0;'>Cancel</button>
+                    </div>
+                </div>`, () => {
+                    // Reset button state when modal closes
+                    isSubmitting = false;
+                    swimBtn.disabled = false;
+                    swimBtn.style.opacity = '1';
+                    swimBtn.style.cursor = 'pointer';
+                    swimBtn.innerHTML = originalHTML;
+                });
+                
+                document.getElementById('submit-fish').onclick = async () => {
+                    const artist = document.getElementById('artist-name').value.trim() || 'Anonymous';
+                    localStorage.setItem('artistName', artist);
+                    await submitFish(artist, true); // Force moderation
+                };
+                document.getElementById('cancel-fish').onclick = () => {
+                    document.querySelector('div[style*="z-index: 9999"]')?.remove();
+                };
+                return;
+            }
+        }
+        
+        // Check fish validity for warning purposes
+        const isFish = await verifyFishDoodle(canvas);
+        lastFishCheck = isFish;
+        showFishWarning(!isFish);
+        
+        // Reset button state
+        swimBtn.disabled = false;
+        swimBtn.style.opacity = '1';
+        swimBtn.style.cursor = 'pointer';
+        swimBtn.innerHTML = originalHTML;
+        
+        // Get saved artist name or use Anonymous
+        const savedArtist = localStorage.getItem('artistName');
+        const defaultName = (savedArtist && savedArtist !== 'Anonymous') ? savedArtist : 'Anonymous';
+        
+        // Show different modal based on fish validity
+        if (!isFish) {
+            // Show moderation warning modal for low-scoring fish
+            showModal(`<div style='text-align:center; padding: 20px;'>
+                <div style='color:#ff6b35; font-weight:bold; font-size: 18px; margin-bottom:16px;'>⚠️ Low Fish Score</div>
+                <div style='margin-bottom:20px; line-height:1.6; color: #666;'>I don't think this is a fish, but you can submit it anyway and I'll review it.</div>
+                <div style='margin-bottom:20px;'>
+                    <label style='display: block; margin-bottom: 8px; font-weight: 500;'>Sign your art:</label>
+                    <input id='artist-name' value='${escapeHtml(defaultName)}' style='margin:0; padding:10px; width:80%; max-width:250px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;' placeholder='Your name'>
+                </div>
+                <div style='display: flex; gap: 12px; justify-content: center;'>
+                    <button id='submit-fish' class='cute-button cute-button-primary' style='padding: 10px 24px;'>Submit for Review</button>
+                    <button id='cancel-fish' class='cute-button' style='padding: 10px 24px; background: #e0e0e0;'>Cancel</button>
+                </div>
+            </div>`, () => {
+                isSubmitting = false;
+            });
+        } else {
+            // Show normal submission modal for good fish
+            showModal(`<div style='text-align:center; padding: 20px;'>
+                <div style='color:#27ae60; font-weight:bold; font-size: 18px; margin-bottom:16px;'>✨ Great Fish!</div>
+                <div style='margin-bottom:20px;'>
+                    <label style='display: block; margin-bottom: 8px; font-weight: 500;'>Sign your art:</label>
+                    <input id='artist-name' value='${escapeHtml(defaultName)}' style='margin:0; padding:10px; width:80%; max-width:250px; border: 2px solid #27ae60; border-radius: 6px; font-size: 14px;' placeholder='Your name'>
+                </div>
+                <div style='display: flex; gap: 12px; justify-content: center;'>
+                    <button id='submit-fish' class='cute-button cute-button-primary' style='padding: 10px 24px; background:#27ae60;'>Submit</button>
+                    <button id='cancel-fish' class='cute-button' style='padding: 10px 24px; background: #e0e0e0;'>Cancel</button>
+                </div>
+            </div>`, () => {
+                isSubmitting = false;
+            });
+        }
+        
+        document.getElementById('submit-fish').onclick = async () => {
+            const artist = document.getElementById('artist-name').value.trim() || 'Anonymous';
+            // Save artist name to localStorage for future use
+            localStorage.setItem('artistName', artist);
+            await submitFish(artist, !isFish); // Pass moderation flag
+        };
+        document.getElementById('cancel-fish').onclick = () => {
+            document.querySelector('div[style*="z-index: 9999"]')?.remove();
+        };
+        
+    } catch (error) {
+        console.error('Error processing fish submission:', error);
+        
+        // Reset button state
+        swimBtn.disabled = false;
+        swimBtn.style.opacity = '1';
+        swimBtn.style.cursor = 'pointer';
+        swimBtn.innerHTML = '<span class="button-icon">🌊</span><span class="button-text">Make it Swim!</span><span class="button-icon">🐟</span>';
+        
+        // Show error modal
+        showModal(`<div style='text-align:center; padding: 20px;'>
+            <div style='color:#ff6b35; font-weight:bold; font-size: 18px; margin-bottom:16px;'>❌ Error</div>
+            <div style='margin-bottom:20px; line-height:1.6; color: #666;'>Failed to process your drawing. Please try again.</div>
+            <div style='margin-bottom:12px; font-size: 12px; color: #999;'>${error.message}</div>
+            <div style='display: flex; gap: 12px; justify-content: center;'>
+                <button onclick="this.closest('[style*=\\'z-index: 9999\\']')?.remove()" class='cute-button cute-button-primary' style='padding: 10px 24px;'>OK</button>
+            </div>
+        </div>`, () => {
+            isSubmitting = false;
+        });
+    }
 });
 
 // Paint options UI - 简化配色方案

@@ -75,22 +75,23 @@ body {
 
 /* ===== Bottom Info Bar ===== */
 .bottom-bar {
-  background: #f8f9fa;
-  border-top: 1px solid #e9ecef;
+  background: #1a1a1a;
+  border-top: 1px solid #333;
   padding: 20px;
   text-align: center;
-  color: #6c757d;
+  color: #adb5bd;
   font-size: 14px;
   margin-top: 40px;
 }
 
 .bottom-bar a {
-  color: #667eea;
+  color: #9ca3ff;
   text-decoration: none;
   font-weight: 500;
 }
 
 .bottom-bar a:hover {
+  color: #b8beff;
   text-decoration: underline;
 }
 
@@ -107,12 +108,12 @@ body {
   gap: 5px;
   padding: 5px 12px;
   border-radius: 15px;
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(156, 163, 255, 0.15);
   transition: all 0.3s ease;
 }
 
 .bottom-bar .social-links a:hover {
-  background: rgba(102, 126, 234, 0.2);
+  background: rgba(156, 163, 255, 0.25);
   transform: translateY(-2px);
 }
 
@@ -434,19 +435,15 @@ body {
   }
 }
 
-/* ===== Dark mode support (optional) ===== */
+/* ===== Dark theme styles (now default for better cross-browser compatibility) ===== */
+/* Mobile social bar already has dark background by default */
+.mobile-social-bar {
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(45, 45, 45, 0.98));
+  border-top: 1px solid #333;
+}
+
+/* Dark theme modal support */
 @media (prefers-color-scheme: dark) {
-  .bottom-bar {
-    background: #1a1a1a;
-    border-top-color: #333;
-    color: #adb5bd;
-  }
-  
-  .mobile-social-bar {
-    background: #1a1a1a;
-    border-top: 1px solid #333;
-  }
-  
   .success-modal-content {
     background: #2d2d2d;
     color: #f8f9fa;
