@@ -389,9 +389,9 @@ body {
     font-size: 12px;
   }
   
-  /* Hide some nav text on very small screens */
+  /* Show nav icons and text on mobile */
   .top-nav .nav-links .btn-text {
-    display: none;
+    font-size: 11px;
   }
   
   /* Adjust modal for mobile */

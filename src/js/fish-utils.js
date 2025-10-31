@@ -425,21 +425,23 @@ function updateAuthenticationUI() {
     if (myTanksLink) {
         myTanksLink.style.display = isLoggedIn ? 'inline' : 'none';
     }
-    // Update auth link (login/logout)
+    
+    // Update profile link visibility (show when logged in)
+    const profileLink = document.getElementById('profile-link');
+    if (profileLink) {
+        profileLink.style.display = isLoggedIn ? 'inline' : 'none';
+    }
+    
+    // Update auth link (show login when logged out, hide when logged in)
     const authLink = document.getElementById('auth-link');
     if (authLink) {
         if (isLoggedIn) {
-            authLink.textContent = 'Logout';
-            authLink.href = '#';
-            authLink.onclick = (e) => {
-                e.preventDefault();
-                logout();
-            };
+            authLink.style.display = 'none'; // Hide login link when logged in
         } else {
+            authLink.style.display = 'inline';
             authLink.textContent = 'Login';
             authLink.href = '/login.html';
             authLink.onclick = null;
-
         }
     }
 

@@ -264,13 +264,6 @@ function sortFish(fishData, sortType, direction = 'desc') {
                 const dateB = b.createdAt ? new Date(b.createdAt.toDate ? b.createdAt.toDate() : b.createdAt) : new Date(0);
                 return direction === 'desc' ? dateB - dateA : dateA - dateB;
             });
-        case 'random':
-            // Fisher-Yates shuffle
-            for (let i = sorted.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [sorted[i], sorted[j]] = [sorted[j], sorted[i]];
-            }
-            return sorted;
         default:
             return sorted;
     }
@@ -329,19 +322,15 @@ function updateSortButtonText() {
             case 'date':
                 baseText = 'Sort by Date';
                 break;
-            case 'random':
-                baseText = 'Random Order';
-                tooltip = 'Show fish in random order';
-                break;
         }
 
-        // Add arrow for current sort (except random)
-        if (sortType === currentSort && sortType !== 'random') {
+        // Add arrow for current sort
+        if (sortType === currentSort) {
             arrow = sortDirection === 'desc' ? ' ↓' : ' ↑';
             tooltip = sortType === 'score'
                 ? (sortDirection === 'desc' ? 'Highest score first' : 'Lowest score first')
                 : (sortDirection === 'desc' ? 'Newest first' : 'Oldest first');
-        } else if (sortType !== 'random') {
+        } else {
             tooltip = `Click to sort by ${sortType}. Click again to reverse order.`;
         }
 
@@ -353,7 +342,7 @@ function updateSortButtonText() {
 // Handle sort button clicks
 async function handleSortChange(sortType) {
     // If clicking the same sort button, toggle direction
-    if (currentSort === sortType && sortType !== 'random') {
+    if (currentSort === sortType) {
         sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
     } else {
         // New sort type, use default direction
@@ -451,12 +440,7 @@ async function loadFishData(sortType = currentSort, isInitialLoad = true) {
         const fishDocs = await getFishBySort(sortType, 25, lastDoc, sortDirection, currentUserId); // Reduced from 50 to 25
 
         // Check if we got fewer docs than requested (indicates end of data)
-        if (fishDocs.length < 25 && sortType !== 'random') {
-            hasMoreFish = false;
-        }
-
-        // For random sorting, disable infinite scroll after first load
-        if (sortType === 'random' && !isInitialLoad) {
+        if (fishDocs.length < 25) {
             hasMoreFish = false;
         }
 
@@ -474,12 +458,12 @@ async function loadFishData(sortType = currentSort, isInitialLoad = true) {
         // Filter to only fish with working images
         const validFish = await filterValidFish(newFish);
 
-        // Update lastDoc for pagination (except for random sorting)
-        if (fishDocs.length > 0 && sortType !== 'random') {
+        // Update lastDoc for pagination
+        if (fishDocs.length > 0) {
             lastDoc = fishDocs[fishDocs.length - 1];
         }
 
-        // Apply client-side sorting for score (random is already handled by DB query)
+        // Apply client-side sorting for score
         if (sortType === 'score') {
             validFish.sort((a, b) => {
                 const scoreA = a.score || 0;

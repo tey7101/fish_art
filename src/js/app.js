@@ -188,12 +188,29 @@ function showModal(html, onClose) {
     modal.style.top = '0';
     modal.style.width = '100vw';
     modal.style.height = '100vh';
-    modal.style.background = 'rgba(192,192,192,0.8)';
+    modal.style.background = 'rgba(0, 0, 0, 0.6)';
+    modal.style.backdropFilter = 'blur(5px)';
     modal.style.display = 'flex';
     modal.style.alignItems = 'center';
     modal.style.justifyContent = 'center';
     modal.style.zIndex = '9999';
-    modal.innerHTML = `<div style="background:#c0c0c0;padding:15px;border: 2px outset #808080;min-width:300px;max-width:90vw;max-height:90vh;overflow:auto;font-family:'MS Sans Serif',sans-serif;font-size:11px;">${html}</div>`;
+    modal.style.animation = 'fadeIn 0.3s ease';
+    
+    const modalContent = document.createElement('div');
+    modalContent.style.background = 'white';
+    modalContent.style.padding = '30px';
+    modalContent.style.borderRadius = '20px';
+    modalContent.style.boxShadow = '0 15px 50px rgba(99, 102, 241, 0.3)';
+    modalContent.style.border = '3px solid #C7D2FE';
+    modalContent.style.minWidth = '320px';
+    modalContent.style.maxWidth = '90vw';
+    modalContent.style.maxHeight = '90vh';
+    modalContent.style.overflow = 'auto';
+    modalContent.style.animation = 'fadeInScale 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    modalContent.innerHTML = html;
+    
+    modal.appendChild(modalContent);
+    
     function close() {
         document.body.removeChild(modal);
         if (onClose) onClose();
@@ -467,20 +484,22 @@ function createPaintOptions() {
     // Create a controls container for better mobile layout
     const controlsContainer = document.createElement('div');
     controlsContainer.style.display = 'flex';
-    controlsContainer.style.flexWrap = 'wrap';
-    controlsContainer.style.gap = '8px';
+    controlsContainer.style.flexWrap = 'nowrap'; // 强制单行
+    controlsContainer.style.gap = '4px'; // 减小间距
     controlsContainer.style.alignItems = 'center';
     controlsContainer.style.justifyContent = 'center';
-    controlsContainer.style.marginTop = '8px';
+    controlsContainer.style.marginTop = '6px';
 
     // Eraser
     const eraserBtn = document.createElement('button');
     eraserBtn.textContent = 'Eraser';
-    eraserBtn.style.padding = '4px 8px';
-    eraserBtn.style.height = '24px';
-    eraserBtn.style.fontSize = '12px';
+    eraserBtn.style.padding = '3px 6px';
+    eraserBtn.style.height = '22px';
+    eraserBtn.style.fontSize = '11px';
     eraserBtn.style.borderRadius = '4px';
     eraserBtn.style.cursor = 'pointer';
+    eraserBtn.style.whiteSpace = 'nowrap'; // 防止文字换行
+    eraserBtn.style.flexShrink = '0'; // 防止被压缩
     eraserBtn.onclick = () => {
         ctx.globalCompositeOperation = 'destination-out';
         ctx.strokeStyle = '#000000';
@@ -492,11 +511,13 @@ function createPaintOptions() {
     const widthContainer = document.createElement('div');
     widthContainer.style.display = 'flex';
     widthContainer.style.alignItems = 'center';
-    widthContainer.style.gap = '4px';
+    widthContainer.style.gap = '3px';
+    widthContainer.style.flexShrink = '0'; // 防止被压缩
     
     const widthLabel = document.createElement('span');
     widthLabel.textContent = 'Size:';
-    widthLabel.style.fontSize = '12px';
+    widthLabel.style.fontSize = '11px';
+    widthLabel.style.whiteSpace = 'nowrap';
     widthContainer.appendChild(widthLabel);
     
     const widthSlider = document.createElement('input');
@@ -504,7 +525,7 @@ function createPaintOptions() {
     widthSlider.min = 1;
     widthSlider.max = 20;
     widthSlider.value = currentLineWidth;
-    widthSlider.style.width = '80px';
+    widthSlider.style.width = '60px'; // 缩小滑块宽度
     widthSlider.oninput = () => {
         currentLineWidth = widthSlider.value;
     };
@@ -538,42 +559,6 @@ function clearCanvas() {
     checkFishAfterStroke();
 }
 
-function flipCanvas() {
-    // Save current state to undo stack before flipping
-    pushUndo();
-    
-    // Get current canvas content
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    
-    // Create a temporary canvas to perform the flip
-    const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext('2d');
-    tempCanvas.width = canvas.width;
-    tempCanvas.height = canvas.height;
-    
-    // Put the current image data on the temp canvas
-    tempCtx.putImageData(imageData, 0, 0);
-    
-    // Clear the main canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Save the context state
-    ctx.save();
-    
-    // Flip horizontally by scaling x by -1 and translating
-    ctx.scale(-1, 1);
-    ctx.translate(-canvas.width, 0);
-    
-    // Draw the flipped image
-    ctx.drawImage(tempCanvas, 0, 0);
-    
-    // Restore the context state
-    ctx.restore();
-    
-    // Recompute fish score after flipping
-    checkFishAfterStroke();
-}
-
 function createUndoButton() {
     let paintBar = document.getElementById('paint-bar');
     if (paintBar) {
@@ -582,11 +567,13 @@ function createUndoButton() {
         if (controlsContainer) {
             const undoBtn = document.createElement('button');
             undoBtn.textContent = 'Undo';
-            undoBtn.style.padding = '4px 8px';
-            undoBtn.style.height = '24px';
-            undoBtn.style.fontSize = '12px';
+            undoBtn.style.padding = '3px 6px';
+            undoBtn.style.height = '22px';
+            undoBtn.style.fontSize = '11px';
             undoBtn.style.borderRadius = '4px';
             undoBtn.style.cursor = 'pointer';
+            undoBtn.style.whiteSpace = 'nowrap';
+            undoBtn.style.flexShrink = '0';
             undoBtn.onclick = undo;
             controlsContainer.appendChild(undoBtn);
         }
@@ -640,9 +627,6 @@ createUndoButton();
 
 // Add clear button to paint bar
 createClearButton();
-
-// Add flip button to paint bar
-createFlipButton();
 
 // Update drawing color and line width
 canvas.addEventListener('mousedown', () => {
@@ -717,7 +701,83 @@ let lastFishCheck = true;
 let isModelLoading = false;
 let modelLoadPromise = null;
 
-// Load ONNX model (make sure fish_doodle_classifier.onnx is in your public folder)
+// UI元素引用
+const loadingStatusEl = document.getElementById('model-loading-status');
+const loadingTextEl = document.getElementById('loading-text');
+const progressBarEl = document.getElementById('model-progress-bar');
+const progressPercentageEl = document.getElementById('progress-percentage');
+const loadingTipEl = document.getElementById('loading-tip');
+const swimButton = document.getElementById('swim-btn');
+
+// 检测网络速度
+function getNetworkSpeed() {
+    if ('connection' in navigator) {
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (connection) {
+            const effectiveType = connection.effectiveType; // '4g', '3g', '2g', 'slow-2g'
+            const downlink = connection.downlink; // Mbps
+            return { effectiveType, downlink };
+        }
+    }
+    return null;
+}
+
+// 更新加载UI
+function updateLoadingUI(state, progress = 0, message = '') {
+    if (!loadingStatusEl) return;
+    
+    switch (state) {
+        case 'show':
+            loadingStatusEl.style.display = 'block';
+            loadingStatusEl.className = 'model-loading-container';
+            if (swimButton) swimButton.disabled = true;
+            
+            // 根据网络速度调整加载文字（不显示tip）
+            const network = getNetworkSpeed();
+            if (network) {
+                if (network.effectiveType === 'slow-2g' || network.effectiveType === '2g') {
+                    loadingTextEl.textContent = '⚠️ Slow Network';
+                } else if (network.effectiveType === '3g') {
+                    loadingTextEl.textContent = '📱 3G Loading';
+                } else {
+                    loadingTextEl.textContent = 'AI Loading';
+                }
+            }
+            break;
+            
+        case 'progress':
+            if (progressBarEl) progressBarEl.style.width = progress + '%';
+            if (progressPercentageEl) progressPercentageEl.textContent = Math.round(progress) + '%';
+            // 不更新文字，保持简洁
+            break;
+            
+        case 'loaded':
+            loadingStatusEl.className = 'model-loading-container loaded';
+            if (loadingTextEl) loadingTextEl.textContent = '✅ AI Ready';
+            if (progressBarEl) progressBarEl.style.width = '100%';
+            if (progressPercentageEl) progressPercentageEl.textContent = '100%';
+            if (swimButton) swimButton.disabled = false;
+            
+            // 1.5秒后隐藏加载提示
+            setTimeout(() => {
+                if (loadingStatusEl) loadingStatusEl.style.display = 'none';
+            }, 1500);
+            break;
+            
+        case 'error':
+            loadingStatusEl.className = 'model-loading-container error';
+            if (loadingTextEl) loadingTextEl.textContent = '❌ Loading Failed';
+            if (loadingTipEl) loadingTipEl.textContent = message || 'Please refresh and try again';
+            if (swimButton) swimButton.disabled = false; // 仍然允许提交，但没有AI验证
+            break;
+            
+        case 'hide':
+            if (loadingStatusEl) loadingStatusEl.style.display = 'none';
+            break;
+    }
+}
+
+// Load ONNX model with progress tracking
 async function loadFishModel() {
     // If already loaded, return immediately
     if (ortSession) {
@@ -732,14 +792,61 @@ async function loadFishModel() {
     // Start loading
     isModelLoading = true;
     console.log('Loading fish model...');
+    updateLoadingUI('show');
     
     modelLoadPromise = (async () => {
         try {
-            ortSession = await window.ort.InferenceSession.create('fish_doodle_classifier.onnx');
+            // 使用 Fetch API 下载模型文件并跟踪进度
+            const modelUrl = 'fish_doodle_classifier.onnx';
+            const response = await fetch(modelUrl);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const contentLength = response.headers.get('content-length');
+            if (!contentLength) {
+                // 如果无法获取文件大小，显示不确定进度
+                updateLoadingUI('progress', 50, 'AI模型下载中...');
+            }
+            
+            const total = parseInt(contentLength, 10);
+            let loaded = 0;
+            
+            // 使用 ReadableStream 跟踪下载进度
+            const reader = response.body.getReader();
+            const chunks = [];
+            
+            while (true) {
+                const { done, value } = await reader.read();
+                
+                if (done) break;
+                
+                chunks.push(value);
+                loaded += value.length;
+                
+                // 更新进度条
+                if (total) {
+                    const progress = (loaded / total) * 100;
+                    updateLoadingUI('progress', progress, 'AI模型下载中...');
+                }
+            }
+            
+            // 合并所有chunk
+            const blob = new Blob(chunks);
+            const arrayBuffer = await blob.arrayBuffer();
+            
+            // 加载到 ONNX Runtime
+            updateLoadingUI('progress', 95, '正在初始化AI模型...');
+            ortSession = await window.ort.InferenceSession.create(arrayBuffer);
+            
             console.log('Fish model loaded successfully');
+            updateLoadingUI('loaded');
+            
             return ortSession;
         } catch (error) {
             console.error('Failed to load fish model:', error);
+            updateLoadingUI('error', 0, error.message);
             throw error;
         } finally {
             isModelLoading = false;
@@ -959,16 +1066,151 @@ document.addEventListener('DOMContentLoaded', () => {
     const lastFishDate = localStorage.getItem('lastFishDate');
     console.log(`Last fish date: ${lastFishDate}, Today: ${today}`);
     if (lastFishDate === today) {
-        showModal(`<div style='text-align:center;'>You already drew a fish today!<br><br>
-            <button id='go-to-tank' style='padding:8px 16px; margin: 0 5px;'>Take me to fishtank</button>
-            <button id='draw-another' style='padding:8px 16px; margin: 0 5px;'>I want to draw another fish</button></div>`, () => { });
+        showModal(`
+            <div style='text-align:center;'>
+                <div style='font-size: 3em; margin-bottom: 15px;'>🐠</div>
+                <h2 style='color: #4F46E5; margin: 0 0 10px 0; font-size: 1.5em;'>You already drew a fish today!</h2>
+                <p style='color: #666; margin-bottom: 25px; font-size: 1em; line-height: 1.5;'>
+                    Come back tomorrow to create another masterpiece, or explore the tank now!
+                </p>
+                <div style='display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;'>
+                    <button id='go-to-tank' class='cute-button cute-button-primary' style='padding: 12px 24px; font-size: 1em; border: none; background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%); color: white; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); transition: all 0.3s ease; font-weight: 600;'>
+                        🐠 View Tank
+                    </button>
+                    <button id='draw-another' class='cute-button' style='padding: 12px 24px; font-size: 1em; border: 2px solid #6366F1; background: white; color: #6366F1; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; font-weight: 600;'>
+                        ✏️ Draw Anyway
+                    </button>
+                </div>
+            </div>
+        `, () => { });
         
-        document.getElementById('go-to-tank').onclick = () => {
+        // Add hover effects
+        const goToTankBtn = document.getElementById('go-to-tank');
+        const drawAnotherBtn = document.getElementById('draw-another');
+        
+        goToTankBtn.onmouseover = () => {
+            goToTankBtn.style.transform = 'translateY(-2px)';
+            goToTankBtn.style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)';
+        };
+        goToTankBtn.onmouseout = () => {
+            goToTankBtn.style.transform = 'translateY(0)';
+            goToTankBtn.style.boxShadow = '0 4px 15px rgba(99, 102, 241, 0.3)';
+        };
+        goToTankBtn.onclick = () => {
             window.location.href = 'tank.html';
         };
         
-        document.getElementById('draw-another').onclick = () => {
+        drawAnotherBtn.onmouseover = () => {
+            drawAnotherBtn.style.background = '#6366F1';
+            drawAnotherBtn.style.color = 'white';
+            drawAnotherBtn.style.transform = 'translateY(-2px)';
+        };
+        drawAnotherBtn.onmouseout = () => {
+            drawAnotherBtn.style.background = 'white';
+            drawAnotherBtn.style.color = '#6366F1';
+            drawAnotherBtn.style.transform = 'translateY(0)';
+        };
+        drawAnotherBtn.onclick = () => {
             document.querySelector('div[style*="z-index: 9999"]')?.remove();
         };
     }
 });
+
+// ===== 迷你鱼缸预览功能 =====
+(function initMiniTankPreview() {
+    const previewSection = document.getElementById('mini-tank-preview');
+    const previewGrid = document.getElementById('fish-preview-grid');
+    
+    if (!previewSection || !previewGrid) return;
+    
+    let previewLoaded = false;
+    
+    // 使用 Intersection Observer 实现懒加载
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !previewLoaded) {
+                previewLoaded = true;
+                loadMiniTankPreview();
+                observer.disconnect();
+            }
+        });
+    }, {
+        rootMargin: '100px' // 提前100px开始加载
+    });
+    
+    observer.observe(previewSection);
+    
+    // 加载最近的鱼
+    async function loadMiniTankPreview() {
+        try {
+            // 显示预览区域
+            previewSection.style.display = 'block';
+            
+            // 获取最近的8条鱼
+            const response = await fetch('https://fishart-bc1f6.firebaseio.com/fishes.json?orderBy="$key"&limitToLast=8');
+            
+            if (!response.ok) {
+                throw new Error('Failed to load fish preview');
+            }
+            
+            const data = await response.json();
+            
+            if (!data || Object.keys(data).length === 0) {
+                previewGrid.innerHTML = '<div class="preview-empty">No fish yet! Be the first to draw one!</div>';
+                return;
+            }
+            
+            // 清空加载提示
+            previewGrid.innerHTML = '';
+            
+            // 转换为数组并反转（最新的在前）
+            const fishes = Object.entries(data).reverse();
+            
+            // 渲染鱼缩略图
+            fishes.forEach(([key, fish]) => {
+                const item = document.createElement('div');
+                item.className = 'fish-preview-item';
+                item.title = `Artist: ${fish.artist || 'Anonymous'}\nVotes: ${fish.votes || 0}`;
+                
+                // 创建canvas显示鱼的图像
+                const canvas = document.createElement('canvas');
+                canvas.width = 80;
+                canvas.height = 48;
+                const ctx = canvas.getContext('2d');
+                
+                // 加载图像
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, 80, 48);
+                };
+                img.onerror = () => {
+                    // 如果图像加载失败，显示占位符
+                    ctx.fillStyle = '#E3F2FD';
+                    ctx.fillRect(0, 0, 80, 48);
+                    ctx.fillStyle = '#1565C0';
+                    ctx.font = '24px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('🐠', 40, 24);
+                };
+                img.src = fish.url;
+                
+                item.appendChild(canvas);
+                
+                // 点击跳转到鱼缸页面
+                item.onclick = () => {
+                    window.location.href = 'tank.html';
+                };
+                
+                previewGrid.appendChild(item);
+            });
+            
+            console.log('[Mini Tank Preview] Loaded', fishes.length, 'fish');
+            
+        } catch (error) {
+            console.error('[Mini Tank Preview] Error:', error);
+            previewGrid.innerHTML = '<div class="preview-empty">Loading failed 😢<br>Please try again later</div>';
+        }
+    }
+})();

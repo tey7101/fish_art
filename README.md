@@ -113,12 +113,27 @@ The app uses machine learning for real-time fish recognition:
 - Handles fish image uploads, processes and stores submissions, and returns the canonical fish image for the tank.
 - May also provide endpoints for moderation, stats, or gallery features.
 
+## 📚 Documentation
+
+Comprehensive documentation has been organized in the `docs/` folder:
+
+- **[Deployment Guide](docs/deployment/)** - Setup, configuration, and deployment instructions
+- **[Development Docs](docs/development/)** - Project structure, development guide, and model optimization
+- **[Project Reports](docs/reports/)** - Updates, summaries, and optimization reports
+- **[SEO Documentation](docs/seo/)** - SEO strategy, implementation guides, and keyword research
+
 ## Setup & Deployment
+
+For detailed setup instructions, see [docs/deployment/SETUP_GUIDE.md](docs/deployment/SETUP_GUIDE.md).
+
+**Quick Start:**
 1. Clone this repository.
-2. Place the ONNX model (`fish_doodle_classifier.onnx`) in the `assets/models/` directory.
+2. Place the ONNX model (`fish_doodle_classifier.onnx`) in the project root directory.
 3. Configure `src/js/firebase-init.js` if using Firestore for real-time features.
 4. Deploy the static site (e.g., Vercel, Netlify, Firebase Hosting).
 5. Ensure the backend endpoint in `src/js/fish-utils.js` points to the deployed `fish-be` instance.
+
+See [DEPLOYMENT.md](docs/deployment/DEPLOYMENT.md) for advanced deployment options.
 
 ## Credits & Attribution
 

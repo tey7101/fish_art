@@ -34,6 +34,9 @@
     <link rel="stylesheet" href="src/css/cute-theme.css?v=2.0">
     <link rel="icon" type="image/png" href="/fish_logo.png">
     
+    <!-- Preload ONNX model for faster loading -->
+    <link rel="preload" href="/fish_doodle_classifier.onnx" as="fetch" crossorigin="anonymous">
+    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-601YXTKK0L"></script>
     <script>
@@ -164,13 +167,26 @@
       <div id="welcome-back-message" style="display: none; margin: 10px auto; padding: 8px 12px; background: #ffffcc; border: 1px solid #cccc99; border-radius: 4px; text-align: center; max-width: 400px; font-size: 12px; color: #666;">
       </div>
       
-      <!-- SEO-optimized hero section -->
-      <section class="hero-intro" style="text-align: center; max-width: 800px; margin: 0 auto 20px; padding: 0 20px;">
-        <p style="font-size: 16px; line-height: 1.6; color: #666; margin-bottom: 15px;">
-          <strong>Draw a fish online</strong> and watch it swim in our <strong>global tank</strong> with 50,000+ doodles from artists worldwide! 
-          Our free AI tool validates your fish art in real-time. See <strong>weird, creative, and funny fish</strong> – then share yours with the world. 
-          Join 1000+ daily doodlers in the ultimate fish drawing community!
+      <!-- Hero section - simplified for better UX -->
+      <section class="hero-intro" style="text-align: center; max-width: 700px; margin: 0 auto 15px; padding: 0 20px;">
+        <p style="font-size: 15px; line-height: 1.5; color: #666; margin-bottom: 10px;">
+          <strong>Draw a fish</strong> and watch it swim! AI-powered tool with <strong>50K+ community fish</strong> 🐠
         </p>
+      </section>
+      
+      <!-- Mini Fish Tank Preview -->
+      <section class="mini-tank-preview" id="mini-tank-preview" style="display: none;">
+        <h3 class="preview-title">🌊 Recent Fish <span class="live-badge">LIVE</span></h3>
+        <div class="fish-preview-grid" id="fish-preview-grid">
+          <!-- Fish thumbnails will be loaded here -->
+          <div class="preview-loading">
+            <div class="loading-spinner">🐠</div>
+            <p>Loading...</p>
+          </div>
+        </div>
+        <a href="tank.html" class="btn-view-tank cute-button cute-button-primary">
+          <span>🐠</span> View Full Tank <span>→</span>
+        </a>
       </section>
       
       <section id="drawing-section">
@@ -184,12 +200,25 @@
           <div class="particles-container" id="drawing-particles"></div>
         </div>
         
+        <!-- AI Model Loading Status -->
+        <div id="model-loading-status" class="model-loading-container" style="display: none;">
+          <div class="model-loading-content">
+            <div class="loading-fish-icon">🐠</div>
+            <div class="loading-text" id="loading-text">AI Loading</div>
+            <div class="progress-bar-container">
+              <div class="progress-bar" id="model-progress-bar"></div>
+            </div>
+            <div class="progress-percentage" id="progress-percentage">0%</div>
+          </div>
+          <div class="loading-tip" id="loading-tip" style="display: none;">First load requires downloading 43MB model file</div>
+        </div>
+        
         <!-- Fish probability indicator (pre-created to prevent layout shifts) -->
         <div id="fish-probability" class="low-probability" style="opacity: 0;">🐠 Fish probability: 00.0% ⚠️</div>
         
         <!-- 提交按钮 -->
         <div class="submit-button-container">
-          <button id="swim-btn" class="cute-button cute-button-primary cute-submit-btn animate-pulse" title="Make your fish swim in the tank">
+          <button id="swim-btn" class="cute-button cute-button-primary cute-submit-btn animate-pulse" title="Make your fish swim in the tank" disabled>
             <span class="button-icon">🌊</span>
             <span class="button-text">Make it Swim!</span>
             <span class="button-icon">🐟</span>
@@ -210,12 +239,6 @@
           <button id="main-share-btn" class="cute-button cute-button-primary" title="Share this tool">
             <span>📤</span> Share
           </button>
-          <a href="how-to-draw-a-fish.html" class="cute-button cute-button-primary" title="Learn how to draw a fish">
-            <span>📚</span> Tutorial
-          </a>
-          <a href="faq.html" class="cute-button cute-button-primary" title="Frequently asked questions">
-            <span>❓</span> FAQ
-          </a>
         </nav>
       </section>
     </div>
@@ -223,6 +246,20 @@
 
   <!-- Bottom Info Bar -->
   <footer class="bottom-bar">
+    <!-- SEO Content Section -->
+    <section style="max-width: 900px; margin: 0 auto 20px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 10px; text-align: left;">
+      <p style="font-size: 14px; line-height: 1.8; color: #ccc; margin-bottom: 12px;">
+        <strong style="color: #fff;">Draw a fish online</strong> and watch it swim in our <strong style="color: #fff;">global tank</strong> with 50,000+ doodles from artists worldwide! 
+        Our free AI tool validates your fish art in real-time. See <strong style="color: #fff;">weird, creative, and funny fish</strong> drawings from the community, 
+        then share yours with the world. Join 1000+ daily doodlers in the ultimate fish drawing community!
+      </p>
+      <p style="font-size: 13px; line-height: 1.6; color: #aaa;">
+        Perfect for artists of all ages, students, teachers, and anyone who loves creative drawing. 
+        Our AI-powered fish drawing tool makes it easy and fun to create digital fish art. 
+        Browse thousands of fish doodles, vote on your favorites, and create custom fish tank collections.
+      </p>
+    </section>
+    
     <div class="social-links">
       <a href="#" id="twitter-footer-link" target="_blank" rel="noopener noreferrer">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle; margin-right: 4px;">
@@ -237,13 +274,15 @@
         Join Our Community
       </a>
     </div>
-    <p style="margin: 10px 0;">
-      <a href="how-to-draw-a-fish.html" style="color: #ddd; margin: 0 10px;">How to Draw a Fish</a> |
-      <a href="fish-drawing-game.html" style="color: #ddd; margin: 0 10px;">Fish Drawing Game</a> |
-      <a href="tank.html" style="color: #ddd; margin: 0 10px;">Global Fish Tank</a> |
-      <a href="fish-doodle-community.html" style="color: #ddd; margin: 0 10px;">Community</a> |
-      <a href="about.html" style="color: #ddd; margin: 0 10px;">About</a> |
-      <a href="faq.html" style="color: #ddd; margin: 0 10px;">FAQ</a>
+    <p style="margin: 10px 0; font-size: 13px;">
+      <a href="tank.html" style="color: #ddd; margin: 0 8px;">Global Fish Tank</a> |
+      <a href="fish-doodle-community.html" style="color: #ddd; margin: 0 8px;">Community</a> |
+      <a href="about.html" style="color: #ddd; margin: 0 8px;">About</a>
+    </p>
+    <p style="margin: 10px 0; font-size: 12px; opacity: 0.7;">
+      <a href="how-to-draw-a-fish.html" style="color: #bbb; margin: 0 8px;">How to Draw a Fish</a> |
+      <a href="fish-drawing-game.html" style="color: #bbb; margin: 0 8px;">Fish Drawing Game</a> |
+      <a href="faq.html" style="color: #bbb; margin: 0 8px;">FAQ</a>
     </p>
     <p>
       🎨 Based on 
@@ -418,6 +457,25 @@
           document.body.removeChild(overlay);
         }
       });
+    }
+    
+    // Register Service Worker for model caching
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then((registration) => {
+          console.log('[App] Service Worker registered successfully:', registration.scope);
+          
+          // Check for updates periodically
+          setInterval(() => {
+            registration.update();
+          }, 60000); // Check every minute
+          
+        }).catch((error) => {
+          console.warn('[App] Service Worker registration failed:', error);
+        });
+      });
+    } else {
+      console.warn('[App] Service Workers are not supported in this browser');
     }
   </script>
 </body>
