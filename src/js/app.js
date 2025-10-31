@@ -732,17 +732,8 @@ function updateLoadingUI(state, progress = 0, message = '') {
             loadingStatusEl.className = 'model-loading-container';
             if (swimButton) swimButton.disabled = true;
             
-            // 根据网络速度调整加载文字（不显示tip）
-            const network = getNetworkSpeed();
-            if (network) {
-                if (network.effectiveType === 'slow-2g' || network.effectiveType === '2g') {
-                    loadingTextEl.textContent = '⚠️ Slow Network';
-                } else if (network.effectiveType === '3g') {
-                    loadingTextEl.textContent = '📱 3G Loading';
-                } else {
-                    loadingTextEl.textContent = 'AI Loading';
-                }
-            }
+            // 统一显示AI Loading，不显示网络类型
+            loadingTextEl.textContent = 'AI Loading';
             break;
             
         case 'progress':

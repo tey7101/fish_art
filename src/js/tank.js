@@ -221,19 +221,28 @@ function calculateFishSize() {
     const tankWidth = swimCanvas.width;
     const tankHeight = swimCanvas.height;
 
+    // Detect if mobile device
+    const isMobile = window.innerWidth <= 768;
+
     // Scale fish size based on tank dimensions
     // Use smaller dimension to ensure fish fit well on all screen ratios
     const baseDimension = Math.min(tankWidth, tankHeight);
 
-    // Fish width should be roughly 8-12% of the smaller tank dimension
-    const fishWidth = Math.floor(baseDimension * 0.1); // 10% of smaller dimension
+    // Fish width should be larger on mobile for better visibility
+    // Mobile: 15% of smaller dimension, Desktop: 10%
+    const sizePercentage = isMobile ? 0.15 : 0.1;
+    const fishWidth = Math.floor(baseDimension * sizePercentage);
     const fishHeight = Math.floor(fishWidth * 0.6); // Maintain 3:5 aspect ratio
 
-    // Set reasonable bounds: 
-    // - Minimum: 30px wide (for very small screens)
-    // - Maximum: 150px wide (for very large screens)
-    const finalWidth = Math.max(30, Math.min(150, fishWidth));
-    const finalHeight = Math.max(18, Math.min(90, fishHeight));
+    // Set reasonable bounds with different limits for mobile vs desktop
+    // Mobile: 50-120px, Desktop: 30-150px
+    const minWidth = isMobile ? 50 : 30;
+    const maxWidth = isMobile ? 120 : 150;
+    const minHeight = isMobile ? 30 : 18;
+    const maxHeight = isMobile ? 72 : 90;
+    
+    const finalWidth = Math.max(minWidth, Math.min(maxWidth, fishWidth));
+    const finalHeight = Math.max(minHeight, Math.min(maxHeight, fishHeight));
 
     return {
         width: finalWidth,
@@ -340,7 +349,7 @@ function createFishObject({
     direction = 1,
     phase = 0,
     amplitude = 24,
-    speed = 2,
+    speed = window.innerWidth <= 768 ? 1.2 : 2, // Slower on mobile for better viewing
     vx = 0,
     vy = 0,
     width = 80,
@@ -390,7 +399,10 @@ function loadFishImageToTank(imgUrl, fishData, onDone) {
             const x = Math.floor(Math.random() * maxX);
             const y = Math.floor(Math.random() * maxY);
             const direction = Math.random() < 0.5 ? -1 : 1;
-            const speed = fishData.speed || 2;
+            // Adjust speed for mobile devices
+            const isMobile = window.innerWidth <= 768;
+            const defaultSpeed = isMobile ? 1.2 : 2;
+            const speed = fishData.speed ? (isMobile ? fishData.speed * 0.6 : fishData.speed) : defaultSpeed;
             const fishObj = createFishObject({
                 fishCanvas: displayCanvas,
                 x,
@@ -672,11 +684,7 @@ function animateFishDeath(fishIndex, onComplete) {
 
 // Show a subtle notification when new fish arrive
 function showNewFishNotification(artistName) {
-    // Check if notifications are enabled
-    const notificationsToggle = document.getElementById('notifications-toggle');
-    if (!notificationsToggle || !notificationsToggle.checked) {
-        return;
-    }
+    // Notifications are always enabled (notification toggle removed)
 
     // Create retro notification element
     const notification = document.createElement('div');
@@ -996,9 +1004,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         const capacity = parseInt(capacityParam);
         if (capacity >= 1 && capacity <= 100) {
             maxTankCapacity = capacity;
-            const fishCountSlider = document.getElementById('fish-count-slider');
-            if (fishCountSlider) {
-                fishCountSlider.value = capacity;
+            const fishCapacitySelect = document.getElementById('fish-capacity');
+            if (fishCapacitySelect) {
+                fishCapacitySelect.value = capacity.toString();
             }
         }
     }
@@ -1033,30 +1041,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         loadFishIntoTank(selectedSort);
     });
 
-    // Handle fish count slider
-    const fishCountSlider = document.getElementById('fish-count-slider');
-    if (fishCountSlider) {
-        // Use debounced function for input events (for real-time display updates)
-        const debouncedUpdateCapacity = debounce((newCapacity) => {
-            updateTankCapacity(newCapacity);
-        }, 300); // 300ms delay
-
-        // Update display immediately but debounce the actual capacity change
-        fishCountSlider.addEventListener('input', (e) => {
-            const newCapacity = parseInt(e.target.value);
-
-            // Update display immediately
-            const displayElement = document.getElementById('fish-count-display');
-            if (displayElement) {
-                displayElement.textContent = newCapacity;
-            }
-
-            // Debounce the actual fish loading
-            debouncedUpdateCapacity(newCapacity);
-        });
-
-        // Also handle the change event for when user stops dragging
-        fishCountSlider.addEventListener('change', (e) => {
+    // Handle fish capacity selector
+    const fishCapacitySelect = document.getElementById('fish-capacity');
+    if (fishCapacitySelect) {
+        fishCapacitySelect.addEventListener('change', (e) => {
             const newCapacity = parseInt(e.target.value);
             updateTankCapacity(newCapacity);
         });
@@ -1096,37 +1084,46 @@ function showFishInfoModal(fish) {
         info += `<div style='margin-bottom: 10px; padding: 8px; background: linear-gradient(135deg, #fff9e6, #fff3d0); border: 2px solid #ffd700; border-radius: 6px; color: #333; font-weight: bold; font-size: 12px; box-shadow: 0 2px 6px rgba(255,215,0,0.3);'>Your Fish</div>`;
     }
 
-    info += `<img src='${imgDataUrl}' width='${modalWidth}' height='${modalHeight}' style='display:block;margin:0 auto 10px auto;border:1px solid #808080;background:#ffffff;' alt='Fish'><br>`;
-    info += `<div style='margin-bottom:10px;'>`;
+    info += `<img src='${imgDataUrl}' width='${modalWidth}' height='${modalHeight}' style='display:block;margin:0 auto 15px auto;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);background:#ffffff;' alt='Fish'><br>`;
+    info += `<div style='margin-bottom:15px;color:#666;line-height:1.8;'>`;
 
     // Make artist name a clickable link to their profile if userId exists
     const artistName = fish.artist || 'Anonymous';
     const userId = fish.userId;
 
     if (userId) {
-        info += `<strong>Artist:</strong> <a href="profile.html?userId=${encodeURIComponent(userId)}" target="_blank" style="color: #0000EE; text-decoration: underline;">${escapeHtml(artistName)}</a><br>`;
+        info += `<strong style="color:#333;">Artist:</strong> <a href="profile.html?userId=${encodeURIComponent(userId)}" target="_blank" style="color: #6366F1; text-decoration: none; font-weight: 600;">${escapeHtml(artistName)}</a><br>`;
     } else {
-        info += `<strong>Artist:</strong> ${escapeHtml(artistName)}<br>`;
+        info += `<strong style="color:#333;">Artist:</strong> <span style="color:#666;">${escapeHtml(artistName)}</span><br>`;
     }
 
     if (fish.createdAt) {
-        info += `<strong>Created:</strong> ${formatDate(fish.createdAt)}<br>`;
+        info += `<strong style="color:#333;">Created:</strong> <span style="color:#666;">${formatDate(fish.createdAt)}</span><br>`;
     }
     const score = calculateScore(fish);
-    info += `<strong class="modal-score">Score: ${score}</strong>`;
+    info += `<div style="margin-top:10px;"><strong style="color:#333;">Score:</strong> <span class="modal-score">${score}</span></div>`;
     info += `</div>`;
 
     // Add voting controls using shared utility
     info += createVotingControlsHTML(fish.docId, fish.upvotes || 0, fish.downvotes || 0, false, 'modal-controls');
 
+    // Action buttons
+    info += `<div style='margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;'>`;
+    
+    // Feed Fish button (always available)
+    info += `<button onclick="feedFishFromModal(${fish.x}, ${fish.y})" class="modal-action-btn modal-feed-btn">
+        🐟 Feed Fish
+    </button>`;
+    
     // Add "Add to Tank" button only if user is logged in
     const userToken = localStorage.getItem('userToken');
     if (userToken) {
-        info += `<div style='margin-top: 10px; text-align: center;'>`;
-        info += `<button onclick="showAddToTankModal('${fish.docId}')" style="border: 1px solid #000; padding: 4px 8px; cursor: pointer;">Add to Tank</button>`;
-        info += `</div>`;
+        info += `<button onclick="showAddToTankModal('${fish.docId}')" class="modal-action-btn modal-tank-btn">
+            🏆 Add to Tank
+        </button>`;
     }
-
+    
+    info += `</div>`;
     info += `</div>`;
 
     showModal(info, () => { });
@@ -1182,7 +1179,9 @@ function showModal(html, onClose) {
     modal.style.top = '0';
     modal.style.width = '100%';
     modal.style.height = '100%';
-    modal.style.background = 'rgba(0,0,0,0.5)';
+    modal.style.background = 'rgba(0, 0, 0, 0.6)';
+    modal.style.backdropFilter = 'blur(5px)';
+    modal.style.animation = 'fadeIn 0.3s ease';
     modal.style.display = 'flex';
     modal.style.alignItems = 'center';
     modal.style.justifyContent = 'center';
@@ -1191,15 +1190,16 @@ function showModal(html, onClose) {
     const modalContent = document.createElement('div');
     modalContent.className = 'modal-content';
     modalContent.style.background = 'white';
-    modalContent.style.margin = '100px auto';
-    modalContent.style.padding = '20px';
+    modalContent.style.padding = '30px';
     modalContent.style.width = 'auto';
-    modalContent.style.minWidth = '300px';
+    modalContent.style.minWidth = '350px';
     modalContent.style.maxWidth = '90vw';
     modalContent.style.maxHeight = '90vh';
-    modalContent.style.borderRadius = '10px';
-    modalContent.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+    modalContent.style.borderRadius = '20px';
+    modalContent.style.boxShadow = '0 15px 50px rgba(99, 102, 241, 0.3)';
+    modalContent.style.border = '3px solid #C7D2FE';
     modalContent.style.overflow = 'auto';
+    modalContent.style.animation = 'fadeInScale 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
     modalContent.innerHTML = html;
 
     modal.appendChild(modalContent);
@@ -1213,6 +1213,26 @@ function showModal(html, onClose) {
     });
     document.body.appendChild(modal);
     return { close, modal };
+}
+
+// Feed fish from modal (called when clicking Feed Fish button)
+function feedFishFromModal(fishX, fishY) {
+    // Get canvas coordinates
+    const rect = swimCanvas.getBoundingClientRect();
+    const canvasX = fishX;
+    const canvasY = fishY;
+    
+    // Drop food near the fish
+    dropFoodPellet(canvasX, canvasY);
+    
+    // Close modal
+    const modal = document.querySelector('.modal-content')?.parentElement;
+    if (modal) {
+        document.body.removeChild(modal);
+    }
+    
+    // Show feedback
+    console.log('Fed fish at', canvasX, canvasY);
 }
 
 function handleTankTap(e) {

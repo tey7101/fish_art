@@ -40,7 +40,7 @@ body {
 
 /* 提交按钮容器 */
 .submit-button-container {
-    margin: 15px 0 10px;
+    margin: 8px 0 10px;
     text-align: center;
 }
 
@@ -416,6 +416,7 @@ body {
     background: linear-gradient(90deg, #C7D2FE, #6366F1);
     outline: none;
     -webkit-appearance: none;
+    appearance: none;
     cursor: pointer;
 }
 
@@ -456,7 +457,7 @@ body {
 #fish-probability {
     display: inline-block;
     padding: 12px 24px;
-    margin: 15px 0;
+    margin: 8px 0;
     background: white;
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -481,7 +482,7 @@ body {
 
 /* ===== AI模型加载状态 ===== */
 .model-loading-container {
-    margin: 8px auto;
+    margin: 5px auto;
     padding: 8px 12px;
     max-width: 450px;
     background: linear-gradient(135deg, #f8f9ff 0%, #e8ebff 100%);
@@ -732,14 +733,21 @@ body {
     /* 画鱼页 */
     #drawing-section h1 {
         font-size: 2em;
+        margin: 12px 0 8px;
     }
     
     #drawing-section h2 {
         font-size: 1em;
+        margin: 0 0 15px;
     }
     
     .cute-canvas-container {
-        padding: 15px;
+        padding: 8px;
+        margin: 5px auto;
+    }
+    
+    .submit-button-container {
+        margin: 5px 0 8px;
     }
     
     #paint-bar {
@@ -823,16 +831,21 @@ body {
 @media (max-width: 480px) {
     #drawing-section h1 {
         font-size: 1.5em;
-        margin: 15px 0 8px;
+        margin: 10px 0 6px;
     }
     
     #drawing-section h2 {
         font-size: 0.9em;
-        margin: 0 0 20px;
+        margin: 0 0 12px;
     }
     
     .cute-canvas-container {
-        padding: 10px;
+        padding: 6px;
+        margin: 3px auto;
+    }
+    
+    .submit-button-container {
+        margin: 3px 0 6px;
     }
     
     #draw-canvas {

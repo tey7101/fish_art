@@ -71,15 +71,8 @@ function insertFooter(special = false) {
     // Create and insert the appropriate footer
     const footer = special ? createSpecialFooter() : createFooter();
     
-    // Insert before the first script tag in the body, or at the end of body if no scripts
-    const bodyScripts = document.querySelectorAll('body script');
-    if (bodyScripts.length > 0) {
-        bodyScripts[0].parentNode.insertBefore(footer, bodyScripts[0]);
-    } else {
-        document.body.appendChild(footer);
-    }
-    
-    // Debug log to verify insertion
+    // Always insert at the very end of body (after all scripts)
+    document.body.appendChild(footer);
 }
 
 // Auto-initialize footer when DOM is loaded
