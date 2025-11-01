@@ -397,15 +397,70 @@ function loadFishImageToTank(imgUrl, fishData, onDone) {
             const maxX = Math.max(0, swimCanvas.width - fishSize.width);
             const maxY = Math.max(0, swimCanvas.height - fishSize.height);
             
-            // Check if this is "my fish" - if so, place it in the center of the screen
-            const isMyFish = window.myFishId && fishData.docId === window.myFishId;
+            // Check if this is "my fish" - support both ID and timestamp matching
+            // Use a global flag to ensure only ONE fish is marked
+            let isMyFish = false;
+            
+            // Try to match by ID first (most reliable)
+            if (window.myFishId && fishData.docId === window.myFishId) {
+                // Only mark if we haven't found "my fish" yet
+                if (!window.myFishAlreadyFound) {
+                    isMyFish = true;
+                    window.myFishAlreadyFound = true;
+                    console.log('🎯 [Fish Match] Found my fish by ID:', fishData.docId);
+                }
+            }
+            // If no ID match, try to match by timestamp (less reliable, only as fallback)
+            else if (window.myFishTime && !window.myFishAlreadyFound) {
+                const myTime = parseInt(window.myFishTime);
+                
+                // Try different timestamp field names
+                const createdAtValue = fishData.createdAt || fishData.CreatedAt || fishData.created_at;
+                
+                if (createdAtValue) {
+                    // Parse timestamp - could be number, string, or Date object
+                    let fishTime;
+                    if (typeof createdAtValue === 'number') {
+                        fishTime = createdAtValue;
+                    } else if (typeof createdAtValue === 'string') {
+                        fishTime = new Date(createdAtValue).getTime();
+                    } else if (createdAtValue instanceof Date) {
+                        fishTime = createdAtValue.getTime();
+                    }
+                    
+                    if (fishTime && !isNaN(fishTime)) {
+                        const timeDiff = Math.abs(fishTime - myTime);
+                        
+                        // Debug log for first few fish
+                        if (fishes.length < 3) {
+                            console.log('🔍 [Fish Time Check]', {
+                                artist: fishData.artist || 'Anonymous',
+                                fishTime,
+                                myTime,
+                                diff: timeDiff,
+                                diffSeconds: (timeDiff / 1000).toFixed(1) + 's'
+                            });
+                        }
+                        
+                        // Match ONLY if created within 5 seconds (very strict)
+                        // This prevents false positives from multiple fish
+                        if (timeDiff < 5000) {
+                            isMyFish = true;
+                            window.myFishAlreadyFound = true;
+                            console.log('🎯 [Fish Match] Found my fish by timestamp! Diff:', (timeDiff / 1000).toFixed(1) + 's');
+                            console.log('   Fish time:', new Date(fishTime).toISOString());
+                            console.log('   My time:', new Date(myTime).toISOString());
+                        }
+                    }
+                }
+            }
             
             let x, y;
             if (isMyFish) {
                 // Place in the center middle row (vertical center)
                 x = Math.floor(Math.random() * maxX); // Random horizontal position
                 y = Math.floor((swimCanvas.height - fishSize.height) / 2); // Center vertical position
-                console.log('🎯 My fish placed at center:', fishData.docId);
+                console.log('🎯 [Fish Position] My fish placed at center y:', y);
             } else {
                 // Random position for other fish
                 x = Math.floor(Math.random() * maxX);
@@ -1011,12 +1066,32 @@ window.addEventListener('DOMContentLoaded', async () => {
     const sortParam = urlParams.get('sort');
     const capacityParam = urlParams.get('capacity');
     const myFishParam = urlParams.get('myFish'); // Get "my fish" ID from URL
+    const myFishTimeParam = urlParams.get('myFishTime'); // Get "my fish" timestamp from URL
     let initialSort = 'recent'; // default
     
+    // Reset the "my fish found" flag at page load
+    window.myFishAlreadyFound = false;
+    
     // Store "my fish" ID globally so loadFishImageToTank can access it
+    // Priority: URL parameter > localStorage
     if (myFishParam) {
         window.myFishId = myFishParam;
-        console.log('🐟 Looking for my fish:', myFishParam);
+        console.log('🐟 [Tank Init] Looking for my fish from URL:', myFishParam);
+    } else if (myFishTimeParam) {
+        window.myFishTime = myFishTimeParam;
+        console.log('🐟 [Tank Init] Looking for my fish by time from URL:', myFishTimeParam);
+    } else {
+        // Check localStorage for recently drawn fish
+        const localFishId = localStorage.getItem('myLastFishId');
+        const localFishTime = localStorage.getItem('myLastFishTime');
+        
+        if (localFishId) {
+            window.myFishId = localFishId;
+            console.log('🐟 [Tank Init] Found my fish ID in localStorage:', localFishId);
+        } else if (localFishTime) {
+            window.myFishTime = localFishTime;
+            console.log('🐟 [Tank Init] Found my fish time in localStorage:', localFishTime);
+        }
     }
 
     // Validate sort parameter and set dropdown
@@ -1044,6 +1119,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     sortSelect.addEventListener('change', () => {
         const selectedSort = sortSelect.value;
 
+        // Reset the "my fish found" flag when changing sort
+        window.myFishAlreadyFound = false;
+
         // Clean up existing listener before switching modes
         if (newFishListener) {
             clearInterval(newFishListener);
@@ -1063,6 +1141,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // Handle refresh button
     refreshButton.addEventListener('click', () => {
+        // Reset the "my fish found" flag when refreshing
+        window.myFishAlreadyFound = false;
         const selectedSort = sortSelect.value;
         loadFishIntoTank(selectedSort);
     });
@@ -1081,6 +1161,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // Load initial fish based on URL parameter or default
     await loadFishIntoTank(initialSort);
+    
+    // Check if we should show welcome modal after fish submission
+    checkAndShowWelcomeModal();
 
     // Clean up listener when page is unloaded
     window.addEventListener('beforeunload', () => {
@@ -1090,6 +1173,167 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     });
 });
+
+// Show welcome modal for newly submitted fish
+function checkAndShowWelcomeModal() {
+    const showModal = localStorage.getItem('showWelcomeModal');
+    
+    if (showModal === 'true') {
+        const fishImage = localStorage.getItem('newFishImage');
+        const needsModeration = localStorage.getItem('needsModeration') === 'true';
+        
+        // Clear the flags
+        localStorage.removeItem('showWelcomeModal');
+        localStorage.removeItem('newFishImage');
+        localStorage.removeItem('needsModeration');
+        
+        // Show the modal
+        if (fishImage) {
+            showWelcomeModalInTank(fishImage, needsModeration);
+        }
+    }
+}
+
+// Display welcome modal in tank page
+function showWelcomeModalInTank(fishImageUrl, needsModeration) {
+    const config = window.SOCIAL_CONFIG || {};
+    const overlay = document.createElement('div');
+    overlay.className = 'success-modal-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    const modalHTML = `
+        <div class="success-modal-content" style="
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            animation: slideInUp 0.5s ease;
+        ">
+            <h2 style="color: #27ae60; margin-bottom: 20px; font-size: 24px;">🎉 ${needsModeration ? 'Fish Submitted!' : 'Your Fish is Swimming!'}</h2>
+            
+            <div class="fish-preview" style="margin: 20px 0;">
+                <img src="${fishImageUrl}" alt="Your fish" style="max-width: 200px; border-radius: 10px; border: 3px solid #27ae60;">
+            </div>
+            
+            <p style="font-size: 16px; margin: 20px 0; color: #666;">
+                ${needsModeration 
+                    ? 'Your fish will appear in the tank after review.' 
+                    : 'Love creating with AI? Join our community!'}
+            </p>
+            
+            ${!needsModeration ? `
+                <div style="margin: 20px 0; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    ${config.twitterUrl ? `<a href="${config.twitterUrl}" target="_blank" rel="noopener noreferrer" style="background: #1DA1F2; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        Follow on X
+                    </a>` : ''}
+                    ${config.discordUrl ? `<a href="${config.discordUrl}" target="_blank" rel="noopener noreferrer" style="background: #5865F2; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                        Join Discord
+                    </a>` : ''}
+                </div>
+                
+                <div style="margin: 25px 0;">
+                    <p style="font-size: 14px; color: #888; margin-bottom: 12px; font-weight: 500;">Share your creation:</p>
+                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="shareOnTwitter('${fishImageUrl}')" style="background: #000; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            X
+                        </button>
+                        <button onclick="shareOnFacebook('${fishImageUrl}')" style="background: #1877F2; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                            Facebook
+                        </button>
+                        <button onclick="shareOnReddit('${fishImageUrl}')" style="background: #FF4500; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+                            Reddit
+                        </button>
+                        <button onclick="copyPageLink()" style="background: #6B7280; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                            Copy Link
+                        </button>
+                    </div>
+                </div>
+            ` : ''}
+            
+            <button onclick="this.closest('.success-modal-overlay').remove()" style="
+                background: #6366F1;
+                color: white;
+                border: none;
+                padding: 12px 30px;
+                border-radius: 10px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                margin-top: 10px;
+                transition: all 0.3s;
+            " onmouseover="this.style.background='#4F46E5'" onmouseout="this.style.background='#6366F1'">
+                Continue Watching
+            </button>
+        </div>
+    `;
+    
+    overlay.innerHTML = modalHTML;
+    
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+    
+    document.body.appendChild(overlay);
+}
+
+// Social share helper functions for welcome modal
+function shareOnTwitter(imageUrl) {
+    if (window.socialShare) {
+        const text = `I just drew this fish with AI! Check it out on FishArt.Online 🐠`;
+        window.socialShare.shareToX(text, window.location.href);
+    }
+}
+
+function shareOnFacebook(imageUrl) {
+    if (window.socialShare) {
+        window.socialShare.shareToFacebook(null, window.location.href);
+    }
+}
+
+function shareOnReddit(imageUrl) {
+    if (window.socialShare) {
+        const title = `I drew this fish with AI on FishArt.Online!`;
+        window.socialShare.shareToReddit(title, window.location.href);
+    }
+}
+
+function copyPageLink() {
+    if (window.socialShare) {
+        window.socialShare.copyToClipboard(window.location.href);
+    } else {
+        // Fallback if socialShare not loaded
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Link copied to clipboard!');
+        }).catch(() => {
+            alert('Failed to copy link');
+        });
+    }
+}
 
 function showFishInfoModal(fish) {
     const fishImgCanvas = document.createElement('canvas');
@@ -1488,6 +1732,13 @@ function animateFishes() {
                 fish.opacity = 1;
                 fish.scale = 1;
             }
+        }
+
+        // Skip movement logic for locked fish (used by Find My Fish feature)
+        if (fish.locked) {
+            // Still draw the fish, but skip all movement and physics
+            drawWigglingFish(fish, time);
+            continue;
         }
 
         // Handle death animation

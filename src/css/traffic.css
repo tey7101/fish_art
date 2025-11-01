@@ -371,6 +371,12 @@ body {
     padding-bottom: 50px;
   }
   
+  /* Ensure bottom-bar has dark background on mobile */
+  .bottom-bar {
+    background: #1a1a1a !important;
+    color: #adb5bd !important;
+  }
+  
   /* Simplify top nav */
   .top-nav {
     padding: 0 15px;

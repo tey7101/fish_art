@@ -28,8 +28,24 @@ function updateActionButtons(profile, profileUserId, isCurrentUser, isLoggedIn =
 
     if (isCurrentUser) {
         // For current user, show their tanks and fish
-        viewFishBtn.href = `rank.html?userId=${encodeURIComponent(profileUserId)}`;
-        viewFishBtn.textContent = isLoggedIn ? 'View My Fish' : 'View My Local Fish';
+        if (isLoggedIn) {
+            viewFishBtn.href = `rank.html?userId=${encodeURIComponent(profileUserId)}`;
+            viewFishBtn.textContent = 'View My Fish';
+        } else {
+            // For local user, navigate to tank page with local fish highlighted
+            const localFishId = localStorage.getItem('myLastFishId');
+            const localFishTime = localStorage.getItem('myLastFishTime');
+            
+            if (localFishId) {
+                viewFishBtn.href = `tank.html?myFish=${localFishId}`;
+            } else if (localFishTime) {
+                viewFishBtn.href = `tank.html?myFishTime=${localFishTime}`;
+            } else {
+                viewFishBtn.href = 'tank.html';
+            }
+            viewFishBtn.textContent = 'View My Local Fish';
+        }
+        
         visitTankBtn.href = 'fishtanks.html';
         visitTankBtn.textContent = isLoggedIn ? 'My Tanks' : 'My Local Tanks';
 

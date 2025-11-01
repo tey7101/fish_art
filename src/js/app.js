@@ -367,8 +367,13 @@ async function submitFish(artist, needsModeration = false) {
                 localStorage.setItem('myLastFishTime', Date.now().toString());
             }
             
-            // Show enhanced success modal with social sharing
-            showSuccessModal(result.data.Image, needsModeration);
+            // Store fish info to show modal in tank page
+            localStorage.setItem('showWelcomeModal', 'true');
+            localStorage.setItem('newFishImage', result.data.Image);
+            localStorage.setItem('needsModeration', needsModeration ? 'true' : 'false');
+            
+            // Navigate to tank page immediately
+            goToTankWithMyFish();
         } else {
             alert('Sorry, there was a problem uploading your fish. Please try again.');
         }
@@ -634,6 +639,9 @@ function createPaintOptions() {
     eraserBtn.style.cursor = 'pointer';
     eraserBtn.style.whiteSpace = 'nowrap'; // 防止文字换行
     eraserBtn.style.flexShrink = '0'; // 防止被压缩
+    eraserBtn.style.display = 'flex';
+    eraserBtn.style.alignItems = 'center';
+    eraserBtn.style.justifyContent = 'center';
     eraserBtn.onclick = () => {
         ctx.globalCompositeOperation = 'destination-out';
         ctx.strokeStyle = '#000000';
@@ -693,6 +701,33 @@ function clearCanvas() {
     checkFishAfterStroke();
 }
 
+// Flip canvas horizontally
+function flipCanvas() {
+    // Save current canvas state
+    pushUndo();
+    
+    // Create temporary canvas
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    
+    // Copy current canvas to temp
+    tempCtx.drawImage(canvas, 0, 0);
+    
+    // Clear original canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Flip and draw back
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.drawImage(tempCanvas, -canvas.width, 0);
+    ctx.restore();
+    
+    // Recalculate fish probability after flip
+    checkFishAfterStroke();
+}
+
 function createUndoButton() {
     let paintBar = document.getElementById('paint-bar');
     if (paintBar) {
@@ -708,6 +743,9 @@ function createUndoButton() {
             undoBtn.style.cursor = 'pointer';
             undoBtn.style.whiteSpace = 'nowrap';
             undoBtn.style.flexShrink = '0';
+            undoBtn.style.display = 'flex';
+            undoBtn.style.alignItems = 'center';
+            undoBtn.style.justifyContent = 'center';
             undoBtn.onclick = undo;
             controlsContainer.appendChild(undoBtn);
         }
@@ -722,11 +760,16 @@ function createClearButton() {
         if (controlsContainer) {
             const clearBtn = document.createElement('button');
             clearBtn.textContent = 'Clear';
-            clearBtn.style.padding = '4px 8px';
-            clearBtn.style.height = '24px';
-            clearBtn.style.fontSize = '12px';
+            clearBtn.style.padding = '3px 6px';
+            clearBtn.style.height = '22px';
+            clearBtn.style.fontSize = '11px';
             clearBtn.style.borderRadius = '4px';
             clearBtn.style.cursor = 'pointer';
+            clearBtn.style.whiteSpace = 'nowrap';
+            clearBtn.style.flexShrink = '0';
+            clearBtn.style.display = 'flex';
+            clearBtn.style.alignItems = 'center';
+            clearBtn.style.justifyContent = 'center';
             clearBtn.onclick = clearCanvas;
             controlsContainer.appendChild(clearBtn);
         }
@@ -741,11 +784,16 @@ function createFlipButton() {
         if (controlsContainer) {
             const flipBtn = document.createElement('button');
             flipBtn.textContent = 'Flip';
-            flipBtn.style.padding = '4px 8px';
-            flipBtn.style.height = '24px';
-            flipBtn.style.fontSize = '12px';
+            flipBtn.style.padding = '3px 6px';
+            flipBtn.style.height = '22px';
+            flipBtn.style.fontSize = '11px';
             flipBtn.style.borderRadius = '4px';
             flipBtn.style.cursor = 'pointer';
+            flipBtn.style.whiteSpace = 'nowrap';
+            flipBtn.style.flexShrink = '0';
+            flipBtn.style.display = 'flex';
+            flipBtn.style.alignItems = 'center';
+            flipBtn.style.justifyContent = 'center';
             flipBtn.onclick = flipCanvas;
             controlsContainer.appendChild(flipBtn);
         }
@@ -761,6 +809,9 @@ createUndoButton();
 
 // Add clear button to paint bar
 createClearButton();
+
+// Add flip button to paint bar
+createFlipButton();
 
 // Update drawing color and line width
 canvas.addEventListener('mousedown', () => {
@@ -1241,107 +1292,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ===== 迷你鱼缸预览功能 =====
-(function initMiniTankPreview() {
-    const previewSection = document.getElementById('mini-tank-preview');
-    const previewGrid = document.getElementById('fish-preview-grid');
-    
-    if (!previewSection || !previewGrid) return;
-    
-    let previewLoaded = false;
-    
-    // 使用 Intersection Observer 实现懒加载
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !previewLoaded) {
-                previewLoaded = true;
-                loadMiniTankPreview();
-                observer.disconnect();
-            }
-        });
-    }, {
-        rootMargin: '100px' // 提前100px开始加载
-    });
-    
-    observer.observe(previewSection);
-    
-    // 加载最近的鱼
-    async function loadMiniTankPreview() {
-        try {
-            // 显示预览区域
-            previewSection.style.display = 'block';
-            
-            // 使用backend API获取最近的8条鱼
-            const response = await fetch(`${window.BACKEND_URL}/api/fish?sort=recent&limit=8`);
-            
-            if (!response.ok) {
-                throw new Error('Failed to load fish preview');
-            }
-            
-            const result = await response.json();
-            const fishList = result.data || [];
-            
-            if (!fishList || fishList.length === 0) {
-                previewGrid.innerHTML = '<div class="preview-empty">No fish yet! Be the first to draw one!</div>';
-                return;
-            }
-            
-            // 清空加载提示
-            previewGrid.innerHTML = '';
-            
-            // 渲染鱼缩略图
-            fishList.forEach((fish) => {
-                const item = document.createElement('div');
-                item.className = 'fish-preview-item';
-                
-                // Handle different backend response formats
-                const fishData = fish.data || fish;
-                const artist = fishData.artist || fishData.Artist || 'Anonymous';
-                const score = fishData.score || 0;
-                item.title = `Artist: ${artist}\nScore: ${score}`;
-                
-                // 创建canvas显示鱼的图像
-                const canvas = document.createElement('canvas');
-                canvas.width = 80;
-                canvas.height = 48;
-                const ctx = canvas.getContext('2d');
-                
-                // 加载图像
-                const img = new Image();
-                img.crossOrigin = 'anonymous';
-                img.onload = () => {
-                    ctx.drawImage(img, 0, 0, 80, 48);
-                };
-                img.onerror = () => {
-                    // 如果图像加载失败，显示占位符
-                    ctx.fillStyle = '#E3F2FD';
-                    ctx.fillRect(0, 0, 80, 48);
-                    ctx.fillStyle = '#1565C0';
-                    ctx.font = '24px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText('🐠', 40, 24);
-                };
-                const imageUrl = fishData.image || fishData.Image;
-                if (imageUrl) {
-                    img.src = imageUrl;
-                }
-                
-                item.appendChild(canvas);
-                
-                // 点击跳转到鱼缸页面
-                item.onclick = () => {
-                    window.location.href = 'tank.html';
-                };
-                
-                previewGrid.appendChild(item);
-            });
-            
-            console.log('[Mini Tank Preview] Loaded', fishList.length, 'fish');
-            
-        } catch (error) {
-            console.error('[Mini Tank Preview] Error:', error);
-            previewGrid.innerHTML = '<div class="preview-empty">Loading failed 😢<br>Please try again later</div>';
-        }
-    }
-})();
