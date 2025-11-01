@@ -1304,7 +1304,7 @@ function showWelcomeModalInTank(fishImageUrl, needsModeration) {
 // Social share helper functions for welcome modal
 function shareOnTwitter(imageUrl) {
     if (window.socialShare) {
-        const text = `I just drew this fish with AI! Check it out on FishArt.Online 🐠`;
+        const text = `🐠 My doodle fish comes alive with AI and swims with 50K+ funny fish from artists worldwide! #drawafish`;
         window.socialShare.shareToX(text, window.location.href);
     }
 }
@@ -1324,7 +1324,13 @@ function shareOnReddit(imageUrl) {
 
 function copyPageLink() {
     if (window.socialShare) {
-        window.socialShare.copyToClipboard(window.location.href);
+        window.socialShare.copyLink(window.location.href).then((success) => {
+            if (success) {
+                alert('Link copied to clipboard!');
+            } else {
+                alert('Failed to copy link');
+            }
+        });
     } else {
         // Fallback if socialShare not loaded
         navigator.clipboard.writeText(window.location.href).then(() => {

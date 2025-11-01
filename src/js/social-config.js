@@ -35,16 +35,16 @@ const SOCIAL_CONFIG = {
   // Share functionality configuration
   share: {
     // Default share text for different platforms
-    defaultText: "I just created an AI fish and it's swimming! 🐟 Check out this amazing tool:",
-    hashtags: ["AI", "CreativeTools", "BuildInPublic"],
+    defaultText: "🐠 My doodle fish comes alive with AI and swims with 50K+ funny fish from artists worldwide!",
+    hashtags: ["drawafish", "AI", "CreativeTools", "BuildInPublic"],
     
     // Platform-specific share messages
     messages: {
-      x: "I just drew a fish with AI and it came to life! 🐟 Try it yourself:",
-      twitter: "I just drew a fish with AI and it came to life! 🐟 Try it yourself:", // Legacy
-      facebook: "Check out this cool AI fish drawing tool I found!",
-      linkedin: "Interesting AI project: Draw a fish and watch it swim with real-time AI validation.",
-      reddit: "Found this awesome AI fish drawing tool - your fish actually swims!"
+      x: "🐠 My doodle fish comes alive with AI and swims with 50K+ funny fish from artists worldwide!",
+      twitter: "🐠 My doodle fish comes alive with AI and swims with 50K+ funny fish from artists worldwide!", // Legacy
+      facebook: "Check out this cool AI fish drawing tool - your doodle comes to life!",
+      linkedin: "Interesting AI project: Draw a fish and watch it swim with 50K+ fish from artists worldwide.",
+      reddit: "My doodle fish comes alive with AI! Join 50K+ artists in this amazing fish tank 🐠"
     }
   },
 
