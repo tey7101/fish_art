@@ -264,7 +264,7 @@ function showSuccessModal(fishImageUrl, needsModeration) {
             <div id="share-buttons-container"></div>
             
             <div style="margin-top: 24px; text-align: center;">
-                <button onclick="window.location.href='tank.html'" class="cute-button cute-button-primary" style="padding: 12px 30px;">
+                <button onclick="goToTankWithMyFish()" class="cute-button cute-button-primary" style="padding: 12px 30px;">
                     View Fish Tank →
                 </button>
             </div>
@@ -287,6 +287,20 @@ function showSuccessModal(fishImageUrl, needsModeration) {
             document.body.removeChild(overlay);
         }
     });
+}
+
+// --- Helper function to navigate to tank with my fish highlighted ---
+function goToTankWithMyFish() {
+    const myFishId = localStorage.getItem('myLastFishId');
+    const myFishTime = localStorage.getItem('myLastFishTime');
+    
+    if (myFishId) {
+        window.location.href = `tank.html?myFish=${myFishId}`;
+    } else if (myFishTime) {
+        window.location.href = `tank.html?myFishTime=${myFishTime}`;
+    } else {
+        window.location.href = 'tank.html';
+    }
 }
 
 // --- Fish submission modal handler ---
@@ -344,6 +358,14 @@ async function submitFish(artist, needsModeration = false) {
             const today = new Date().toDateString();
             localStorage.setItem('lastFishDate', today);
             localStorage.setItem('userId', result.data.userId);
+            
+            // Save the fish ID or timestamp to identify "my fish" in the tank
+            if (result.data.id) {
+                localStorage.setItem('myLastFishId', result.data.id);
+            } else {
+                // If no ID, save timestamp for approximate matching
+                localStorage.setItem('myLastFishTime', Date.now().toString());
+            }
             
             // Show enhanced success modal with social sharing
             showSuccessModal(result.data.Image, needsModeration);
@@ -1200,7 +1222,7 @@ document.addEventListener('DOMContentLoaded', () => {
             goToTankBtn.style.boxShadow = '0 4px 15px rgba(99, 102, 241, 0.3)';
         };
         goToTankBtn.onclick = () => {
-            window.location.href = 'tank.html';
+            goToTankWithMyFish();
         };
         
         drawAnotherBtn.onmouseover = () => {

@@ -516,6 +516,12 @@ function getCurrentUserId() {
 
 // Check if a fish belongs to the current user
 function isUserFish(fish) {
+    // Check if this is marked as "my fish" (recently submitted)
+    if (fish.isMyFish) {
+        return true;
+    }
+    
+    // Check if userId matches current user
     const currentUserId = getCurrentUserId();
     if (!currentUserId || !fish.userId) {
         return false;

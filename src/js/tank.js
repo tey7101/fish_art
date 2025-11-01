@@ -396,8 +396,22 @@ function loadFishImageToTank(imgUrl, fishData, onDone) {
         if (displayCanvas && displayCanvas.width && displayCanvas.height) {
             const maxX = Math.max(0, swimCanvas.width - fishSize.width);
             const maxY = Math.max(0, swimCanvas.height - fishSize.height);
-            const x = Math.floor(Math.random() * maxX);
-            const y = Math.floor(Math.random() * maxY);
+            
+            // Check if this is "my fish" - if so, place it in the center of the screen
+            const isMyFish = window.myFishId && fishData.docId === window.myFishId;
+            
+            let x, y;
+            if (isMyFish) {
+                // Place in the center middle row (vertical center)
+                x = Math.floor(Math.random() * maxX); // Random horizontal position
+                y = Math.floor((swimCanvas.height - fishSize.height) / 2); // Center vertical position
+                console.log('🎯 My fish placed at center:', fishData.docId);
+            } else {
+                // Random position for other fish
+                x = Math.floor(Math.random() * maxX);
+                y = Math.floor(Math.random() * maxY);
+            }
+            
             const direction = Math.random() < 0.5 ? -1 : 1;
             // Adjust speed for mobile devices
             const isMobile = window.innerWidth <= 768;
@@ -424,6 +438,11 @@ function loadFishImageToTank(imgUrl, fishData, onDone) {
                 score: fishData.score || 0,
                 userId: fishData.userId || fishData.UserId || null
             });
+            
+            // Mark as "my fish" if it matches
+            if (isMyFish) {
+                fishObj.isMyFish = true;
+            }
 
             // Add entrance animation for new fish
             if (fishData.docId && fishes.length >= maxTankCapacity - 1) {
@@ -991,7 +1010,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const sortParam = urlParams.get('sort');
     const capacityParam = urlParams.get('capacity');
+    const myFishParam = urlParams.get('myFish'); // Get "my fish" ID from URL
     let initialSort = 'recent'; // default
+    
+    // Store "my fish" ID globally so loadFishImageToTank can access it
+    if (myFishParam) {
+        window.myFishId = myFishParam;
+        console.log('🐟 Looking for my fish:', myFishParam);
+    }
 
     // Validate sort parameter and set dropdown
     if (sortParam && ['recent', 'popular', 'random'].includes(sortParam)) {
