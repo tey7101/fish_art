@@ -1271,16 +1271,17 @@ document.addEventListener('DOMContentLoaded', () => {
             // 显示预览区域
             previewSection.style.display = 'block';
             
-            // 获取最近的8条鱼
-            const response = await fetch('https://fishart-bc1f6.firebaseio.com/fishes.json?orderBy="$key"&limitToLast=8');
+            // 使用backend API获取最近的8条鱼
+            const response = await fetch(`${window.BACKEND_URL}/api/fish?sort=recent&limit=8`);
             
             if (!response.ok) {
                 throw new Error('Failed to load fish preview');
             }
             
-            const data = await response.json();
+            const result = await response.json();
+            const fishList = result.data || [];
             
-            if (!data || Object.keys(data).length === 0) {
+            if (!fishList || fishList.length === 0) {
                 previewGrid.innerHTML = '<div class="preview-empty">No fish yet! Be the first to draw one!</div>';
                 return;
             }
@@ -1288,14 +1289,16 @@ document.addEventListener('DOMContentLoaded', () => {
             // 清空加载提示
             previewGrid.innerHTML = '';
             
-            // 转换为数组并反转（最新的在前）
-            const fishes = Object.entries(data).reverse();
-            
             // 渲染鱼缩略图
-            fishes.forEach(([key, fish]) => {
+            fishList.forEach((fish) => {
                 const item = document.createElement('div');
                 item.className = 'fish-preview-item';
-                item.title = `Artist: ${fish.artist || 'Anonymous'}\nVotes: ${fish.votes || 0}`;
+                
+                // Handle different backend response formats
+                const fishData = fish.data || fish;
+                const artist = fishData.artist || fishData.Artist || 'Anonymous';
+                const score = fishData.score || 0;
+                item.title = `Artist: ${artist}\nScore: ${score}`;
                 
                 // 创建canvas显示鱼的图像
                 const canvas = document.createElement('canvas');
@@ -1319,7 +1322,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     ctx.textBaseline = 'middle';
                     ctx.fillText('🐠', 40, 24);
                 };
-                img.src = fish.url;
+                const imageUrl = fishData.image || fishData.Image;
+                if (imageUrl) {
+                    img.src = imageUrl;
+                }
                 
                 item.appendChild(canvas);
                 
@@ -1331,7 +1337,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 previewGrid.appendChild(item);
             });
             
-            console.log('[Mini Tank Preview] Loaded', fishes.length, 'fish');
+            console.log('[Mini Tank Preview] Loaded', fishList.length, 'fish');
             
         } catch (error) {
             console.error('[Mini Tank Preview] Error:', error);
