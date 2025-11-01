@@ -1304,21 +1304,22 @@ function showWelcomeModalInTank(fishImageUrl, needsModeration) {
 // Social share helper functions for welcome modal
 function shareOnTwitter(imageUrl) {
     if (window.socialShare) {
-        const text = `🐠 My doodle fish comes alive with AI and swims with 50K+ funny fish from artists worldwide! #drawafish`;
-        window.socialShare.shareToX(text, window.location.href);
+        // 使用配置文件中的统一文案
+        window.socialShare.shareToX(null, window.location.href);
     }
 }
 
 function shareOnFacebook(imageUrl) {
     if (window.socialShare) {
-        window.socialShare.shareToFacebook(null, window.location.href);
+        // 使用配置文件中的统一文案
+        window.socialShare.shareToFacebook(window.location.href, null);
     }
 }
 
 function shareOnReddit(imageUrl) {
     if (window.socialShare) {
-        const title = `I drew this fish with AI on FishArt.Online!`;
-        window.socialShare.shareToReddit(title, window.location.href);
+        // 使用配置文件中的统一文案
+        window.socialShare.shareToReddit(null, window.location.href);
     }
 }
 

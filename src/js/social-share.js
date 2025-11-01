@@ -58,9 +58,12 @@ class SocialShare {
   /**
    * Share to Facebook
    */
-  shareToFacebook(customUrl) {
+  shareToFacebook(customUrl, customText) {
     const url = customUrl || this.siteUrl;
-    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    const text = customText || this.config.share.messages.facebook;
+    // Note: Facebook's sharer doesn't support pre-filled text directly
+    // The text is used for meta tags and OpenGraph, users will need to add their own text
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
     
     this.openPopup(shareUrl, 'Facebook Share', 550, 420);
   }
@@ -68,8 +71,9 @@ class SocialShare {
   /**
    * Share to Instagram (opens Instagram app or web)
    */
-  shareToInstagram(customUrl) {
+  shareToInstagram(customUrl, customText) {
     const url = customUrl || this.siteUrl;
+    const text = customText || this.config.share.messages.instagram;
     // Instagram doesn't have a direct URL share, so we'll copy the link and open Instagram
     this.copyLink(url).then(() => {
       // Try to open Instagram app on mobile, or web on desktop
@@ -83,8 +87,20 @@ class SocialShare {
       } else {
         window.open('https://www.instagram.com/', '_blank');
       }
-      alert('Link copied! You can now paste it in your Instagram post or story.');
+      alert(`Link copied! Suggested caption:\n\n${text}\n\nYou can now paste it in your Instagram post or story.`);
     });
+  }
+
+  /**
+   * Share to LinkedIn
+   */
+  shareToLinkedIn(customText, customUrl) {
+    const url = customUrl || this.siteUrl;
+    const text = customText || this.config.share.messages.linkedin;
+    // LinkedIn share URL with title and summary
+    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+    
+    this.openPopup(shareUrl, 'LinkedIn Share', 550, 500);
   }
 
   /**
@@ -155,13 +171,16 @@ class SocialShare {
         this.shareToX(customText, customUrl);
         break;
       case 'facebook':
-        this.shareToFacebook(customUrl);
+        this.shareToFacebook(customUrl, customText);
         break;
       case 'instagram':
-        this.shareToInstagram(customUrl);
+        this.shareToInstagram(customUrl, customText);
         break;
       case 'reddit':
         this.shareToReddit(customText, customUrl);
+        break;
+      case 'linkedin':
+        this.shareToLinkedIn(customText, customUrl);
         break;
       case 'copy':
         return await this.copyLink(customUrl);

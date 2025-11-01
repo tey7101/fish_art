@@ -39,12 +39,14 @@ const SOCIAL_CONFIG = {
     hashtags: ["drawafish", "AI", "CreativeTools", "BuildInPublic"],
     
     // Platform-specific share messages
+    // 统一使用X的分享文案以保持品牌一致性
     messages: {
       x: "🐠 My doodle fish comes alive with AI and swims with 50K+ funny fish from artists worldwide!",
       twitter: "🐠 My doodle fish comes alive with AI and swims with 50K+ funny fish from artists worldwide!", // Legacy
-      facebook: "Check out this cool AI fish drawing tool - your doodle comes to life!",
-      linkedin: "Interesting AI project: Draw a fish and watch it swim with 50K+ fish from artists worldwide.",
-      reddit: "My doodle fish comes alive with AI! Join 50K+ artists in this amazing fish tank 🐠"
+      facebook: "🐠 My doodle fish comes alive with AI and swims with 50K+ funny fish from artists worldwide!",
+      linkedin: "🐠 My doodle fish comes alive with AI and swims with 50K+ funny fish from artists worldwide!",
+      reddit: "🐠 My doodle fish comes alive with AI and swims with 50K+ funny fish from artists worldwide!",
+      instagram: "🐠 My doodle fish comes alive with AI and swims with 50K+ funny fish from artists worldwide!"
     }
   },
 
